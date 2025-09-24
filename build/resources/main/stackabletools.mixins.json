@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "org.yoann.stackabletools.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"ItemAccessor",
+		"ToolItemMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
