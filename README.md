@@ -2,6 +2,12 @@
 
 StackableTools est un mod Minecraft développé avec Fabric qui permet de rendre les outils stackables, améliorant ainsi la gestion de l'inventaire et l'expérience de jeu.
 
+## Downloads 
+
+https://www.curseforge.com/minecraft/mc-mods/stackabletools
+
+https://modrinth.com/mod/stackabletools
+
 ## Fonctionnalités
 - Permet de stacker plusieurs outils identiques dans un même slot d'inventaire.
 - Compatible avec les outils vanilla (pioche, pelle, hache, épée, etc.).
