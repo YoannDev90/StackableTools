@@ -1,14 +1,15 @@
 {
 	"schemaVersion": 1,
 	"id": "stackabletools",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"name": "Stackable Tools",
-	"description": "Allows tools to stack up to 8.",
+	"description": "Allows tools to stack with configurable stack size.",
 	"authors": [
 		"Yoann"
 	],
 	"contact": {},
 	"license": "MIT",
+	"icon": "assets/stackabletools/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
