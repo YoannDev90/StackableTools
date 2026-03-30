@@ -1,0 +1,51 @@
+{
+	"schemaVersion": 1,
+	"id": "stackabletoolskotlin",
+	"version": "${version}",
+	"name": "StackableToolsKotlin",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/stackabletoolskotlin/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "stackabletoolskotlin.StackableToolsKotlin",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "stackabletoolskotlin.StackableToolsKotlinClient",
+				"adapter": "kotlin"
+			}
+		],
+		"fabric-datagen": [
+			{
+				"value": "stackabletoolskotlin.StackableToolsKotlinDataGenerator",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"stackabletoolskotlin.mixins.json",
+		{
+			"config": "stackabletoolskotlin.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.5",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
