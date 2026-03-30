@@ -4,6 +4,7 @@ import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
 import java.io.File
 import java.nio.charset.StandardCharsets
+import stackabletoolskotlin.CustomLogger
 
 /**
  * Gestionnaire de configuration TOML
@@ -65,15 +66,15 @@ object ConfigManager {
     private fun loadConfigFromFile(configFile: File): StackableToolsKotlinConfig {
         try {
             val toml = Toml().read(configFile)
-            val config = StackableToolsKotlinConfig(
+            val loadedConfig = StackableToolsKotlinConfig(
                 enableLogging = toml.getBoolean("logging.enable", true),
                 logLevel = toml.getString("logging.level", "INFO"),
                 maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
                 enableStacking = toml.getBoolean("stacking.enable", true)
             )
-            config.isLoaded = true
-            config = config
-            return config
+            loadedConfig.isLoaded = true
+            config = loadedConfig
+            return loadedConfig
         } catch (e: Exception) {
             CustomLogger.error("Erreur lors du chargement de la configuration: ${e.message}")
             // Retourner une configuration par défaut en cas d'erreur
