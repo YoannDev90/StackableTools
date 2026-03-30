@@ -47,6 +47,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 	modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+	
+	// TOML parser
+	modImplementation("com.moandjiezana.toml:toml4j:0.7.2")
 }
 
 tasks.processResources {
