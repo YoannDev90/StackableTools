@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Logger personnalisé qui écrit les messages à la fois dans la console et dans un fichier
  */
-object Logger {
+object CustomLogger {
     private const val LOG_FILE_PATH = "logs/stackabletoolskotlin.log"
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 

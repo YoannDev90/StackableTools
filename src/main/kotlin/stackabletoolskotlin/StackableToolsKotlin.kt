@@ -2,6 +2,7 @@ package stackabletoolskotlin
 
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
+import stackabletoolskotlin.CustomLogger
 
 object StackableToolsKotlin : ModInitializer {
     private val logger = LoggerFactory.getLogger("stackabletoolskotlin")
