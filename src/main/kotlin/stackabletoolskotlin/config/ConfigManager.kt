@@ -1,0 +1,108 @@
+package stackabletoolskotlin.config
+
+import com.moandjiezana.toml.Toml
+import com.moandjiezana.toml.TomlWriter
+import java.io.File
+import java.nio.charset.StandardCharsets
+
+/**
+ * Gestionnaire de configuration TOML
+ */
+object ConfigManager {
+    private const val CONFIG_FILE_PATH = "config/stackabletoolskotlin.toml"
+    private var config: StackableToolsKotlinConfig? = null
+
+    /**
+     * Charge la configuration depuis le fichier TOML
+     */
+    fun loadConfig(): StackableToolsKotlinConfig {
+        val configFile = File(CONFIG_FILE_PATH)
+        
+        if (!configFile.exists()) {
+            // Créer le fichier de configuration par défaut
+            createDefaultConfig(configFile)
+            return loadConfigFromFile(configFile)
+        }
+        
+        return loadConfigFromFile(configFile)
+    }
+
+    /**
+     * Sauvegarde la configuration dans le fichier TOML
+     */
+    fun saveConfig(config: StackableToolsKotlinConfig) {
+        val configFile = File(CONFIG_FILE_PATH)
+        val writer = TomlWriter()
+        
+        try {
+            configFile.parentFile?.mkdirs()
+            writer.write(config, configFile)
+        } catch (e: Exception) {
+            CustomLogger.error("Erreur lors de la sauvegarde de la configuration: ${e.message}")
+        }
+    }
+
+    /**
+     * Met à jour une valeur spécifique dans la configuration
+     */
+    fun updateConfig(key: String, value: Any) {
+        val currentConfig = config ?: loadConfig()
+        val updatedConfig = updateConfigValue(currentConfig, key, value)
+        saveConfig(updatedConfig)
+        config = updatedConfig
+    }
+
+    /**
+     * Récupère la configuration actuelle
+     */
+    fun getConfig(): StackableToolsKotlinConfig {
+        if (config == null) {
+            config = loadConfig()
+        }
+        return config!!
+    }
+
+    private fun loadConfigFromFile(configFile: File): StackableToolsKotlinConfig {
+        try {
+            val toml = Toml().read(configFile)
+            val config = StackableToolsKotlinConfig(
+                enableLogging = toml.getBoolean("logging.enable", true),
+                logLevel = toml.getString("logging.level", "INFO"),
+                maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
+                enableStacking = toml.getBoolean("stacking.enable", true)
+            )
+            config.isLoaded = true
+            config = config
+            return config
+        } catch (e: Exception) {
+            CustomLogger.error("Erreur lors du chargement de la configuration: ${e.message}")
+            // Retourner une configuration par défaut en cas d'erreur
+            val defaultConfig = StackableToolsKotlinConfig()
+            config = defaultConfig
+            return defaultConfig
+        }
+    }
+
+    private fun createDefaultConfig(configFile: File) {
+        val defaultConfig = StackableToolsKotlinConfig()
+        val writer = TomlWriter()
+        
+        try {
+            configFile.parentFile?.mkdirs()
+            writer.write(defaultConfig, configFile)
+            CustomLogger.info("Fichier de configuration par défaut créé: $CONFIG_FILE_PATH")
+        } catch (e: Exception) {
+            CustomLogger.error("Erreur lors de la création du fichier de configuration par défaut: ${e.message}")
+        }
+    }
+
+    private fun updateConfigValue(config: StackableToolsKotlinConfig, key: String, value: Any): StackableToolsKotlinConfig {
+        return when (key) {
+            "logging.enable" -> config.copy(enableLogging = value as Boolean)
+            "logging.level" -> config.copy(logLevel = value as String)
+            "stacking.max_stack_size" -> config.copy(maxStackSize = value as Long)
+            "stacking.enable" -> config.copy(enableStacking = value as Boolean)
+            else -> config
+        }
+    }
+}
