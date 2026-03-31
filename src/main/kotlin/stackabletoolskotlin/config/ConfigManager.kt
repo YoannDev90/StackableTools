@@ -89,12 +89,19 @@ object ConfigManager {
     }
 
     private fun createDefaultConfig(configFile: File) {
-        val defaultConfig = StackableToolsKotlinConfig()
-        val writer = TomlWriter()
-
         try {
             configFile.parentFile?.mkdirs()
-            writer.write(defaultConfig, configFile)
+            val defaultToml = buildString {
+                appendLine("[logging]")
+                appendLine("enable = true")
+                appendLine("level = \"INFO\"")
+                appendLine()
+                appendLine("[stacking]")
+                appendLine("max_stack_size = 64")
+                appendLine("enable = true")
+                appendLine("manual_item_ids = []")
+            }
+            configFile.writeText(defaultToml, StandardCharsets.UTF_8)
             CustomLogger.info("Fichier de configuration par défaut créé: $CONFIG_FILE_PATH")
         } catch (e: Exception) {
             CustomLogger.error("Erreur lors de la création du fichier de configuration par défaut: ${e.message}")

@@ -91,19 +91,17 @@ tasks.jar {
 		rename { "${it}_${base.archivesName.get()}" }
 	}
 
-	// Inclure uniquement les dépendances non-Fabric dans l'archive du mod (toml4j, json)
+	// Embeds only the needed external libs (toml4j, org.json) to avoid classloader mismatches
 	from({
 		configurations.runtimeClasspath.get()
 			.filter { it.name.endsWith(".jar") }
-			.filterNot { it.name.contains("fabric-lang-kotlin") || it.name.contains("fabric-api") || it.name.contains("fabric-loader") }
+			.filter { it.name.contains("toml4j") || it.name.contains("json") }
 			.map { zipTree(it) }
 	}) {
 		exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 	}
 }
 
-
-// configure the maven publication
 publishing {
 	publications {
 		register<MavenPublication>("mavenJava") {
