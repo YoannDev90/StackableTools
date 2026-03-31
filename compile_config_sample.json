@@ -1,0 +1,5 @@
+{
+  "launcherDir": "/path/to/launcher/",
+  "instanceDir": "instances/version/",
+  "location": "minecraft/mods/"
+}

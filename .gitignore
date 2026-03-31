@@ -1,8 +1,8 @@
 # Specific files and directories to ignore
 
 .kotlin/
-compile.sh
 .env
+compile_config.json
 
 # gradle
 
