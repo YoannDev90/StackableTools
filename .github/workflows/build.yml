@@ -8,36 +8,57 @@ on:
   pull_request:
   push:
   workflow_dispatch:
+    inputs:
+      release-title:
+        description: 'Title for the release (defaults to "Release vX.Y.Z")'
+        required: false
+      release-body:
+        description: 'Body for the release (defaults to "Release vX.Y.Z")'
+        required: false
+      release-tag:
+        description: 'Tag for the release (defaults to "vX.Y.Z")'
+        required: false
+      publish-curseforge-modrinth:
+        description: 'Whether to publish the release on CurseForge and Modrinth (defaults to false)'
+        required: false
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: validate gradle wrapper
+      - name: Validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
+      - name: Setup jdk
         uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'microsoft'
-      - name: make gradle wrapper executable
+      - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: build
+      - name: Build
         run: ./gradlew build
-      - name: capture build artifacts
+      - name: Capture build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: build/libs/
           
   release:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -72,13 +93,43 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag v${{ steps.get_version.outputs.version }}
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin v${{ steps.get_version.outputs.version }}
+
+      - name: Generate release notes
+        id: release_notes
+        uses: amitsingh-007/release-notes-generator@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          output_file: release-notes.md
+          changelog: true
+          increment_minor: false
+          released_versions: "${{ steps.get_version.outputs.version }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release v${{ steps.get_version.outputs.version }}
+          body: ${{ steps.release_notes.outputs.release_notes || github.event.inputs.release-body || 'Release v' + steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
           files: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to CurseForge + Modrinth
+        uses: bearded-coder/publish-mc-mods@v1
+        if: ${{ github.event.inputs.publish-curseforge-modrinth == 'true' || github.ref == 'refs/heads/master' }}
+        with:
+          file: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
+          loader: fabric
+          game_versions: '1.20.4'
+          version_number: ${{ steps.get_version.outputs.version }}
+          release_type: release
+          changelog: ${{ github.event.inputs.release-body || 'Automated release from GitHub Actions.' }}
+          curseforge_api_key: ${{ secrets.CURSEFORGE_API_KEY }}
+          curseforge_project_id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+          modrinth_api_token: ${{ secrets.MODRINTH_API_TOKEN }}
+          modrinth_project_id: ${{ secrets.MODRINTH_PROJECT_ID }}
+
