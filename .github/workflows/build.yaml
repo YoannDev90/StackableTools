@@ -111,7 +111,7 @@ jobs:
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release v${{ steps.get_version.outputs.version }}
-          body: ${{ steps.release_notes.outputs.release_notes || github.event.inputs.release-body || 'Release v' + steps.get_version.outputs.version }}
+          body: ${{ steps.release_notes.outputs.release_notes || github.event.inputs.release-body || format('Release v%s', steps.get_version.outputs.version) }}
           draft: false
           prerelease: false
           files: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
