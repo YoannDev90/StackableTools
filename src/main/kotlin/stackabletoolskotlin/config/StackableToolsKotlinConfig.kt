@@ -8,6 +8,7 @@ data class StackableToolsKotlinConfig(
     var logLevel: String = "INFO",
     var maxStackSize: Long = 64L,
     var enableStacking: Boolean = true,
+    var manualStackableItemIds: List<String> = listOf(),
     var isLoaded: Boolean = false
 ) {
     companion object {

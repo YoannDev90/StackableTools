@@ -48,9 +48,11 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 	modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
 	
-	// TOML parser
-	modImplementation("com.moandjiezana.toml:toml4j:0.7.2")
+	// TOML parser pour configuration (la dépendance est incluse dans le mod par empaquetage)
+	implementation("com.moandjiezana.toml:toml4j:0.7.2")
 	implementation("org.json:json:20240303")
+
+	// Afin d’empaqueter toml4j dans le JAR, on inclut le runtime dans la tâche jar.
 }
 
 tasks.processResources {
@@ -83,11 +85,23 @@ java {
 
 tasks.jar {
 	inputs.property("archivesName", base.archivesName)
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 	from("LICENSE") {
 		rename { "${it}_${base.archivesName.get()}" }
 	}
+
+	// Inclure uniquement les dépendances non-Fabric dans l'archive du mod (toml4j, json)
+	from({
+		configurations.runtimeClasspath.get()
+			.filter { it.name.endsWith(".jar") }
+			.filterNot { it.name.contains("fabric-lang-kotlin") || it.name.contains("fabric-api") || it.name.contains("fabric-loader") }
+			.map { zipTree(it) }
+	}) {
+		exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+	}
 }
+
 
 // configure the maven publication
 publishing {

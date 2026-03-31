@@ -14,7 +14,7 @@ object ConfigManager {
     private var config: StackableToolsKotlinConfig? = null
 
     /**
-     * Charge la configuration depuis le fichier TOML
+     * Charge la configuration depuis le fichier (ou crée par défaut)
      */
     fun loadConfig(): StackableToolsKotlinConfig {
         val configFile = File(CONFIG_FILE_PATH)
@@ -34,7 +34,7 @@ object ConfigManager {
     fun saveConfig(config: StackableToolsKotlinConfig) {
         val configFile = File(CONFIG_FILE_PATH)
         val writer = TomlWriter()
-        
+
         try {
             configFile.parentFile?.mkdirs()
             writer.write(config, configFile)
@@ -66,18 +66,22 @@ object ConfigManager {
     private fun loadConfigFromFile(configFile: File): StackableToolsKotlinConfig {
         try {
             val toml = Toml().read(configFile)
+            val manualItemIds = toml.getList<String>("stacking.manual_item_ids")
+                ?.mapNotNull { it?.trim()?.takeIf { it.isNotEmpty() } }
+                ?: listOf()
+
             val loadedConfig = StackableToolsKotlinConfig(
                 enableLogging = toml.getBoolean("logging.enable", true),
                 logLevel = toml.getString("logging.level", "INFO"),
                 maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
-                enableStacking = toml.getBoolean("stacking.enable", true)
+                enableStacking = toml.getBoolean("stacking.enable", true),
+                manualStackableItemIds = manualItemIds
             )
             loadedConfig.isLoaded = true
             config = loadedConfig
             return loadedConfig
         } catch (e: Exception) {
             CustomLogger.error("Erreur lors du chargement de la configuration: ${e.message}")
-            // Retourner une configuration par défaut en cas d'erreur
             val defaultConfig = StackableToolsKotlinConfig()
             config = defaultConfig
             return defaultConfig
@@ -87,7 +91,7 @@ object ConfigManager {
     private fun createDefaultConfig(configFile: File) {
         val defaultConfig = StackableToolsKotlinConfig()
         val writer = TomlWriter()
-        
+
         try {
             configFile.parentFile?.mkdirs()
             writer.write(defaultConfig, configFile)
@@ -103,6 +107,7 @@ object ConfigManager {
             "logging.level" -> config.copy(logLevel = value as String)
             "stacking.max_stack_size" -> config.copy(maxStackSize = value as Long)
             "stacking.enable" -> config.copy(enableStacking = value as Boolean)
+            "stacking.manual_item_ids" -> config.copy(manualStackableItemIds = (value as? List<*>)?.mapNotNull { it?.toString() } ?: listOf())
             else -> config
         }
     }
