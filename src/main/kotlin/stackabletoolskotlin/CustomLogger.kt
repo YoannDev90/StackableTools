@@ -17,11 +17,9 @@ object CustomLogger {
     fun info(message: String) {
         val timestamp = LocalDateTime.now().format(formatter)
         val logMessage = "[INFO][$timestamp] $message"
-        
-        // Écriture dans la console
-        println(logMessage)
-        
-        // Écriture dans le fichier
+        // Console en ASCII (remplacement accents/non-ASCII)
+        println(logMessage.toAscii())
+        // Fichier en UTF-8
         writeToFile(logMessage)
     }
 
@@ -31,11 +29,7 @@ object CustomLogger {
     fun warn(message: String) {
         val timestamp = LocalDateTime.now().format(formatter)
         val logMessage = "[WARN][$timestamp] $message"
-        
-        // Écriture dans la console
-        println(logMessage)
-        
-        // Écriture dans le fichier
+        println(logMessage.toAscii())
         writeToFile(logMessage)
     }
 
@@ -45,11 +39,7 @@ object CustomLogger {
     fun error(message: String) {
         val timestamp = LocalDateTime.now().format(formatter)
         val logMessage = "[ERROR][$timestamp] $message"
-        
-        // Écriture dans la console
-        println(logMessage)
-        
-        // Écriture dans le fichier
+        println(logMessage.toAscii())
         writeToFile(logMessage)
     }
 
@@ -59,11 +49,7 @@ object CustomLogger {
     fun debug(message: String) {
         val timestamp = LocalDateTime.now().format(formatter)
         val logMessage = "[DEBUG][$timestamp] $message"
-        
-        // Écriture dans la console
-        println(logMessage)
-        
-        // Écriture dans le fichier
+        println(logMessage.toAscii())
         writeToFile(logMessage)
     }
 
@@ -72,17 +58,20 @@ object CustomLogger {
      */
     private fun writeToFile(message: String) {
         try {
-            // Créer le répertoire logs s'il n'existe pas
             val logDir = File(LOG_FILE_PATH).parentFile
             if (!logDir.exists()) {
                 logDir.mkdirs()
             }
-            
-            // Ajouter le message au fichier
-            File(LOG_FILE_PATH).appendText("$message\n")
+            File(LOG_FILE_PATH).appendText("$message\n", Charsets.UTF_8)
         } catch (e: Exception) {
-            // En cas d'erreur d'écriture, afficher dans la console
             println("[ERROR] Impossible d'écrire dans le fichier de log: ${e.message}")
         }
+    }
+
+    // Extension pour transformer une chaîne en ASCII (remplacement accents/non-ASCII)
+    private fun String.toAscii(): String {
+        val normalized = java.text.Normalizer.normalize(this, java.text.Normalizer.Form.NFD)
+        // Double backslash pour Kotlin
+        return normalized.replace("[^\\p{ASCII}]".toRegex(), "?")
     }
 }

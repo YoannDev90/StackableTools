@@ -1,24 +1,34 @@
+
 package stackabletoolskotlin
+
+import java.nio.charset.StandardCharsets
 
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 import stackabletoolskotlin.CustomLogger
 
 object StackableToolsKotlin : ModInitializer {
-    private val logger = LoggerFactory.getLogger("stackabletoolskotlin")
+	private val logger = LoggerFactory.getLogger("stackabletoolskotlin")
+
+	private fun getModVersion(): String {
+		// Essaye de lire la version depuis fabric.mod.json dans le jar
+		return try {
+			val resource = javaClass.classLoader.getResourceAsStream("fabric.mod.json")
+			if (resource != null) {
+				val text = resource.reader(StandardCharsets.UTF_8).readText()
+				val match = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(text)
+				val version = match?.groupValues?.get(1) ?: "unknown"
+				if (version.startsWith("$")) "unknown" else version
+			} else {
+				"unknown"
+			}
+		} catch (_: Exception) {
+			"unknown"
+		}
+	}
 
 	override fun onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-		logger.info("Initialisation du mod StackableToolsKotlin démarrée")
-		
-		// Ajout de logs pour vérifier le bon chargement
-		CustomLogger.info("Mod StackableToolsKotlin chargé avec succès")
-		CustomLogger.info("Version du mod: 1.0.0")
-		
-		logger.info("Hello Fabric world!")
-		
-		CustomLogger.info("Initialisation du mod StackableToolsKotlin terminée")
+		val version = getModVersion()
+		CustomLogger.info("Initialisation de StackableToolsKotlin version $version")
 	}
 }
