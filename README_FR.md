@@ -25,6 +25,9 @@ StackableTools est un mod Minecraft pour Fabric qui permet de stacker les outils
 2. Placez le `.jar` dans `mods/` de votre instance Minecraft.
 3. Lancez Minecraft avec le profil Fabric.
 
+> [!TIP] 
+> Utilisez Freesm Launcher (fork de Prism) pour une installation et une gestion de modpack optimisées.
+
 ## Compilation et exécution (développeur)
 ```bash
 git clone https://github.com/yoann/StackableToolsKotlin.git
@@ -53,7 +56,7 @@ cd StackableToolsKotlin
 3. PR avec description et tests.
 
 ## Licence
-MIT. Voir `LICENSE`.
+CC0 1.0 Universal. Voir [LICENSE](https://github.com/YoannDev90/StackableToolsKotlin/blob/master/LICENSE)
 
 ## Merci
 - Fabric

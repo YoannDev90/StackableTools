@@ -25,6 +25,9 @@ StackableTools is a Minecraft Fabric mod that makes tools stackable for improved
 2. Place the `.jar` in the `mods/` folder of your Minecraft instance.
 3. Launch Minecraft with the Fabric profile.
 
+> [!TIP] 
+> Use Freesm Launcher (a fork of Prism) for streamlined modpack installation and management.
+
 ## Build and run (developer)
 ```bash
 git clone https://github.com/yoann/StackableToolsKotlin.git
