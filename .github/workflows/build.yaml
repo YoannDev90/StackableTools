@@ -11,15 +11,19 @@ on:
     inputs:
       release-title:
         description: 'Title for the release (defaults to "Release vX.Y.Z")'
+        type: string
         required: false
       release-body:
         description: 'Body for the release (defaults to "Release vX.Y.Z")'
+        type: string
         required: false
       release-tag:
         description: 'Tag for the release (defaults to "vX.Y.Z")'
+        type: string
         required: false
       publish-curseforge-modrinth:
         description: 'Whether to publish the release on CurseForge and Modrinth (defaults to false)'
+        type: boolean
         required: false
 permissions:
   contents: write
@@ -51,7 +55,7 @@ jobs:
           path: build/libs/
           
   release:
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/master'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
