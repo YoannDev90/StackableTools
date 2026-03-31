@@ -1,50 +1,61 @@
 # StackableTools
 
-StackableTools est un mod Minecraft développé avec Fabric qui permet de rendre les outils stackables, améliorant ainsi la gestion de l'inventaire et l'expérience de jeu.
+- Français : [README_FR.md](README_FR.md)
+- English : this file
 
-## Downloads 
+StackableTools is a Minecraft Fabric mod that makes tools stackable for improved inventory management.
 
-https://www.curseforge.com/minecraft/mc-mods/stackabletools
+## Download links
+- https://www.curseforge.com/minecraft/mc-mods/stackabletools
+- https://modrinth.com/mod/stackabletools
 
-https://modrinth.com/mod/stackabletools
+## Main features
+- Stack tools such as swords, pickaxes, shovels, axes, shears, etc.
+- Fabric compatibility with Minecraft 1.20.x (to be verified for specific versions)
+- Configurable options via `config/stackabletools.json`
+- Uses mixins for clean and efficient integration
 
-## Fonctionnalités
-- Permet de stacker plusieurs outils identiques dans un même slot d'inventaire.
-- Compatible avec les outils vanilla (pioche, pelle, hache, épée, etc.).
-- Configuration simple et extensible.
+## Requirements
+- Java 20+ (or Java 17 if targeting older Minecraft versions)
+- Gradle 8+
+- Fabric Loader & Fabric API for client runtime
 
-## Installation (Utilisateur)
-1. Téléchargez le fichier `.jar` du mod depuis la section releases ou compilez-le vous-même (voir ci-dessous).
-2. Installez [Fabric Loader](https://fabricmc.net/use/) et [Fabric API](https://modmuss50.me/fabric.html).
-3. Placez le fichier `.jar` dans le dossier `mods` de votre installation Minecraft.
+## User installation
+1. Download the `.jar` from the GitHub releases.
+2. Place the `.jar` in the `mods/` folder of your Minecraft instance.
+3. Launch Minecraft with the Fabric profile.
 
-## Compilation et lancement (Développeur)
-1. Clonez le dépôt :
-   ```bash
-   git clone https://github.com/yoann/StackableTools.git
-   ```
-2. Ouvrez le projet dans IntelliJ IDEA ou VSCode.
-3. Compilez le mod avec Gradle :
-   ```bash
-   ./gradlew build
-   ```
-4. Le fichier compilé se trouve dans `build/libs/`.
+## Build and run (developer)
+```bash
+git clone https://github.com/yoann/StackableToolsKotlin.git
+cd StackableToolsKotlin
+./gradlew build
+```
+- Output artifact: `build/libs/stackabletoolskotlin-<version>.jar`
+- Local run directory: `run/`
 
-## Structure du projet
-- `src/main/java/org/yoann/stackabletools/` : Code principal du mod
-- `src/main/resources/` : Ressources Fabric (mod.json, assets, mixins)
-- `src/client/java/org/yoann/stackabletools/` : Code client (mixin client, etc.)
-- `run/` : Dossier de lancement local
+## GitHub Actions workflow
+- `build`: compile + tests.
+- `release`: triggered by `workflow_dispatch` or `master`, creates git tag, GitHub Release, and publishes to CurseForge + Modrinth.
+- Ensure secrets are configured:
+  - `GITHUB_TOKEN`, `CURSEFORGE_API_KEY`, `MODRINTH_API_TOKEN`,
+  - `CURSEFORGE_PROJECT_ID`, `MODRINTH_PROJECT_ID`.
 
-## Contribuer
-Les contributions sont les bienvenues !
-- Forkez le projet
-- Créez une branche pour votre fonctionnalité/correction
-- Soumettez une Pull Request
+### `workflow_dispatch` inputs
+- `release-title` (optional)
+- `release-body` (optional)
+- `release-tag` (optional)
+- `publish-curseforge-modrinth` (true|false)
 
-## Licence
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus d'informations.
+## Contributing
+1. Fork the project.
+2. Create a feature/fix branch.
+3. Open a PR with description and tests.
 
-## Remerciements
-- [Fabric](https://fabricmc.net/)
-- [SpongePowered Mixin](https://github.com/SpongePowered/Mixin)
+## License
+MIT. See `LICENSE`.
+
+## Thanks
+- Fabric
+- SpongePowered Mixin
+- Minecraft modding community
