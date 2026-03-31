@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 import stackabletoolskotlin.CustomLogger
+import stackabletoolskotlin.config.ConfigManager
 
 object StackableToolsKotlin : ModInitializer {
 	private val logger = LoggerFactory.getLogger("stackabletoolskotlin")
@@ -30,5 +31,11 @@ object StackableToolsKotlin : ModInitializer {
 	override fun onInitialize() {
 		val version = getModVersion()
 		CustomLogger.info("Initialisation de StackableToolsKotlin version $version")
+
+		// Force le chargement et la création de la config au démarrage si elle n'existe pas
+		val config = ConfigManager.getConfig()
+		if (!config.isLoaded) {
+			CustomLogger.info("Configuration stackabletoolskotlin chargée par défaut via ConfigManager")
+		}
 	}
 }

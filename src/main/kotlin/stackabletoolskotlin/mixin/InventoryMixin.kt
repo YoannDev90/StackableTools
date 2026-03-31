@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import stackabletoolskotlin.CustomLogger
+import stackabletoolskotlin.StackableToolsKotlinUtils
 
 @Mixin(PlayerInventory::class)
 abstract class InventoryMixin {
@@ -18,8 +19,9 @@ abstract class InventoryMixin {
 
         val itemName = stack.name.string
         val count = stack.count
+        val isStackable = StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)
 
-        CustomLogger.info("Inventaire : objet ajouté -> $itemName x$count")
+        CustomLogger.info("Inventaire : objet ajouté -> $itemName x$count (outil/manuel=$isStackable)")
     }
 
     @Inject(method = ["setStack", "(ILnet/minecraft/item/ItemStack;)V"], at = [At("RETURN")])
@@ -28,7 +30,8 @@ abstract class InventoryMixin {
 
         val itemName = stack.name.string
         val count = stack.count
+        val isStackable = StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)
 
-        CustomLogger.info("Inventaire : slot $slot mis à jour -> $itemName x$count")
+        CustomLogger.info("Inventaire : slot $slot mis à jour -> $itemName x$count (outil/manuel=$isStackable)")
     }
 }
