@@ -96,22 +96,12 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin v${{ steps.get_version.outputs.version }}
 
-      - name: Generate release notes
-        id: release_notes
-        uses: amitsingh-007/release-notes-generator@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          output_file: release-notes.md
-          changelog: true
-          increment_minor: false
-          released_versions: "${{ steps.get_version.outputs.version }}"
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: Release v${{ steps.get_version.outputs.version }}
-          body: ${{ steps.release_notes.outputs.release_notes || github.event.inputs.release-body || format('Release v%s', steps.get_version.outputs.version) }}
+          body: ${{ github.event.inputs.release-body || format('Release v%s', steps.get_version.outputs.version) }}
           draft: false
           prerelease: false
           files: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
@@ -119,17 +109,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to CurseForge + Modrinth
-        uses: bearded-coder/publish-mc-mods@v1
+        uses: tristankechlo/publish-mc-mod@v2.0.0
         if: ${{ github.event.inputs.publish-curseforge-modrinth == 'true' || github.ref == 'refs/heads/master' }}
         with:
-          file: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
-          loader: fabric
-          game_versions: '1.20.4'
-          version_number: ${{ steps.get_version.outputs.version }}
-          release_type: release
+          mc-version: '1.20.4'
+          mod-version: ${{ steps.get_version.outputs.version }}
+          curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+          modrinth-id: ${{ secrets.MODRINTH_PROJECT_ID }}
+          version-range: '[1.20.4,1.21)'
+          version-type: 'release'
+          loaders: 'fabric'
           changelog: ${{ github.event.inputs.release-body || 'Automated release from GitHub Actions.' }}
-          curseforge_api_key: ${{ secrets.CURSEFORGE_API_KEY }}
-          curseforge_project_id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
-          modrinth_api_token: ${{ secrets.MODRINTH_API_TOKEN }}
-          modrinth_project_id: ${{ secrets.MODRINTH_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
+          modrinth-token: ${{ secrets.MODRINTH_API_TOKEN }}
 
