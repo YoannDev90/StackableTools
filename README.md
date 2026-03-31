@@ -53,7 +53,7 @@ cd StackableToolsKotlin
 3. Open a PR with description and tests.
 
 ## License
-MIT. See `LICENSE`.
+CC0 1.0 Universal. See [LICENSE](https://github.com/YoannDev90/StackableToolsKotlin/blob/master/LICENSE)
 
 ## Thanks
 - Fabric
