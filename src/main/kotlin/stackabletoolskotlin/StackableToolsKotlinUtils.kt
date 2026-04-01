@@ -6,6 +6,7 @@ import net.minecraft.item.PotionItem
 import net.minecraft.item.ToolItem
 import net.minecraft.registry.Registries
 import stackabletoolskotlin.config.ConfigManager
+import stackabletoolskotlin.config.StackableToolsKotlinConfig
 
 object StackableToolsKotlinUtils {
 
@@ -15,6 +16,13 @@ object StackableToolsKotlinUtils {
     fun canStackSameDurability(a: ItemStack, b: ItemStack): Boolean {
         if (a.isEmpty || b.isEmpty) return false
         if (a.item !== b.item) return false
+        
+        // REGLE : On ne stacke que les outils NEUFS (damage == 0).
+        // Si un outil est usagé, il doit rester seul pour éviter de re-stacker pendant l'usage.
+        if (a.item is ToolItem || a.item is ArmorItem) {
+            if (a.damage > 0 || b.damage > 0) return false
+        }
+
         if (a.damage != b.damage) return false
         if (!ItemStack.canCombine(a, b)) return false
         return true

@@ -25,10 +25,10 @@ abstract class InventoryMixin {
 
     @Inject(method = ["insertStack", "(Lnet/minecraft/item/ItemStack;)Z"], at = [At("HEAD")], cancellable = true)
     private fun onInsertStack(stack: ItemStack, cir: CallbackInfoReturnable<Boolean>) {
-        if (stack.isEmpty) return
+        val inv = this as Any as PlayerInventory
+        if (stack.isEmpty || inv.player.getWorld().isClient) return
         if (!StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) return
 
-        val inv = this as PlayerInventory
         val cfg = ConfigManager.getConfig()
         val maxStackSize = when {
             stack.item is ToolItem -> cfg.maxToolStackSize
@@ -86,12 +86,9 @@ abstract class InventoryMixin {
 
     @Inject(method = ["setStack", "(ILnet/minecraft/item/ItemStack;)V"], at = [At("RETURN")])
     private fun onSetStack(slot: Int, stack: ItemStack, cir: CallbackInfo) {
-        if (stack.isEmpty) return
-
-        val itemName = stack.name.string
-        val count = stack.count
-        val isStackable = StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)
-
-        CustomLogger.info("Inventaire : slot $slot mis à jour -> $itemName x$count (outil/manuel=$isStackable)")
+        val inv = this as Any as PlayerInventory
+        // Désactivé car trop verbeux et redondant avec insertStack
+        // if (stack.isEmpty || inv.player.getWorld().isClient) return
+        return
     }
 }

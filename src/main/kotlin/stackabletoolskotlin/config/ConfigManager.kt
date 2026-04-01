@@ -84,7 +84,6 @@ object ConfigManager {
                 logLevel = toml.getString("logging.level", "INFO"),
                 logInFile = toml.getBoolean("logging.in_file", true),
                 logInConsole = toml.getBoolean("logging.in_console", true),
-                logInChat = toml.getBoolean("logging.in_chat", true),
                 enableStacking = toml.getBoolean("stacking.enable", true),
                 maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
                 maxToolStackSize = toml.getLong("stacking.max_tool_stack_size", 8L),
@@ -142,7 +141,6 @@ object ConfigManager {
             appendLine("level = \"INFO\"")
             appendLine("in_file = true")
             appendLine("in_console = true")
-            appendLine("in_chat = true")
             appendLine()
             appendLine("[stacking]")
             appendLine("enable = true")
@@ -165,7 +163,6 @@ object ConfigManager {
             "logging.level" -> config.copy(logLevel = value as String)
             "logging.in_file" -> config.copy(logInFile = value as Boolean)
             "logging.in_console" -> config.copy(logInConsole = value as Boolean)
-            "logging.in_chat" -> config.copy(logInChat = value as Boolean)
             "stacking.enable" -> config.copy(enableStacking = value as Boolean)
             "stacking.max_stack_size" -> config.copy(maxStackSize = value as Long)
             "stacking.max_tool_stack_size" -> config.copy(maxToolStackSize = value as Long)
