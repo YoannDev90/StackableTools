@@ -76,6 +76,15 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Verify artifacts exist
+        run: |
+          echo "Listing build/libs contents:"
+          ls -R build/libs/
+          if ! ls build/libs/*.jar 1> /dev/null 2>&1; then
+            echo "::error::No artifacts found in build/libs/. Failing the step."
+            exit 1
+          fi
+
       - name: Get version
         id: get_version
         run: |
@@ -116,7 +125,7 @@ jobs:
 
       - name: Publish to CurseForge + Modrinth
         uses: tristankechlo/publish-mc-mod@v2.0.0
-        if: ${{ github.event.inputs.publish-curseforge-modrinth == 'true' || github.ref == 'refs/heads/master' }}
+        if: ${{ github.event.inputs.publish-curseforge-modrinth == 'true' }}
         with:
           mc-version: '1.20.4'
           mod-version: ${{ steps.get_version.outputs.version }}
@@ -125,6 +134,9 @@ jobs:
           version-range: '[1.20.4,1.21)'
           version-type: 'release'
           loaders: 'fabric'
+          files: 'build/libs/!(*-dev.jar|*-sources.jar|*-javadoc.jar|*-all.jar)'
+          curseforge-files: 'build/libs/!(*-dev.jar|*-sources.jar|*-javadoc.jar|*-all.jar)'
+          modrinth-files: 'build/libs/!(*-dev.jar|*-sources.jar|*-javadoc.jar|*-all.jar)'
           changelog: ${{ github.event.inputs.release-body || 'Automated release from GitHub Actions.' }}
           curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
           modrinth-token: ${{ secrets.MODRINTH_API_TOKEN }}
