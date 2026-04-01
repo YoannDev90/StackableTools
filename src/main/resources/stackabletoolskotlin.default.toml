@@ -1,0 +1,8 @@
+[logging]
+enable = true
+level = "INFO"
+
+[stacking]
+max_stack_size = 64
+enable = true
+manual_item_ids = []

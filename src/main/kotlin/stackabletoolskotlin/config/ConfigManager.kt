@@ -88,23 +88,38 @@ object ConfigManager {
         }
     }
 
+    private const val DEFAULT_CONFIG_RESOURCE = "/stackabletoolskotlin.default.toml"
+
     private fun createDefaultConfig(configFile: File) {
         try {
             configFile.parentFile?.mkdirs()
-            val defaultToml = buildString {
-                appendLine("[logging]")
-                appendLine("enable = true")
-                appendLine("level = \"INFO\"")
-                appendLine()
-                appendLine("[stacking]")
-                appendLine("max_stack_size = 64")
-                appendLine("enable = true")
-                appendLine("manual_item_ids = []")
-            }
+            val defaultToml = loadDefaultConfigFromResources() ?: buildDefaultConfigString()
             configFile.writeText(defaultToml, StandardCharsets.UTF_8)
             CustomLogger.info("Fichier de configuration par défaut créé: $CONFIG_FILE_PATH")
         } catch (e: Exception) {
             CustomLogger.error("Erreur lors de la création du fichier de configuration par défaut: ${e.message}")
+        }
+    }
+
+    private fun loadDefaultConfigFromResources(): String? {
+        return try {
+            ConfigManager::class.java.getResourceAsStream(DEFAULT_CONFIG_RESOURCE)?.bufferedReader(StandardCharsets.UTF_8)?.use { it.readText() }
+        } catch (e: Exception) {
+            CustomLogger.error("Impossible de charger la config par défaut depuis les ressources: ${e.message}")
+            null
+        }
+    }
+
+    private fun buildDefaultConfigString(): String {
+        return buildString {
+            appendLine("[logging]")
+            appendLine("enable = true")
+            appendLine("level = \"INFO\"")
+            appendLine()
+            appendLine("[stacking]")
+            appendLine("max_stack_size = 64")
+            appendLine("enable = true")
+            appendLine("manual_item_ids = []")
         }
     }
 
