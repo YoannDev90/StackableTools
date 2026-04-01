@@ -10,6 +10,17 @@ import stackabletoolskotlin.config.ConfigManager
 object StackableToolsKotlinUtils {
 
     /**
+     * Vérifie si deux stacks peuvent être fusionnés (même item, même durabilité, même NBT)
+     */
+    fun canStackSameDurability(a: ItemStack, b: ItemStack): Boolean {
+        if (a.isEmpty || b.isEmpty) return false
+        if (a.item !== b.item) return false
+        if (a.damage != b.damage) return false
+        if (!ItemStack.canCombine(a, b)) return false
+        return true
+    }
+
+    /**
      * Retourne true si l'item doit être empilé (tool/potion/configurable)
      */
     fun isToolOrManuallyRegistered(stack: ItemStack): Boolean {
