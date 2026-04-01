@@ -1,0 +1,35 @@
+=========================================================
+      LISTE DE TESTS - STACKABLE TOOLS KOTLIN
+=========================================================
+
+--- CATEGORIE 1 : STACKING DE BASE ---
+[ ] Ramasser 10 pelles neuves au sol : Doivent former un stack de 8 et un de 2.
+[ ] Commande /give @p diamond_shovel 5 : Doit donner un stack de 5.
+[ ] Fusion manuelle (souris) : Prendre une pelle neuve et cliquer sur un stack de 7. Doit former 8.
+[ ] Limite de stack : Vérifier que les potions montent à 16 et les outils à 8 (selon config).
+[ ] Items exclus : Vérifier qu'un item dans 'excludedItemIds' ne se stacke jamais.
+
+--- CATEGORIE 2 : DURABILITÉ ET SÉPARATION ---
+[ ] Utilisation d'un stack (Pelle/Pioche) : Casser un bloc avec un stack de 8. Doit laisser 1 pelle abîmée dans la main et 7 pelles neuves dans un autre slot.
+[ ] Vérification des dégâts : Vérifier que SEULE la pelle isolée a pris des dégâts (barre d'usure).
+[ ] Fusion interdite : Essayer de fusionner à la souris une pelle abîmée avec une pelle neuve. Doit être IMPOSSIBLE.
+[ ] Double usure : Essayer de fusionner deux pelles abîmées. Doit être IMPOSSIBLE.
+
+--- CATEGORIE 3 : ENCHANTEMENTS ---
+[ ] Compatibilité NBT : Vérifier qu'une pelle "Efficacité V" ne se stacke PAS avec une pelle sans enchantement (même neuve).
+[ ] Mending (Rapiéçage) : Endommager une pelle Mending isolée, puis ramasser de l'XP. Elle doit se réparer.
+[ ] Unbreaking (Solidité) : Vérifier que l'enchantement fonctionne toujours sur l'outil isolé lors de l'usage.
+
+--- CATEGORIE 4 : TRANSFERTS ET UI ---
+[ ] Shift-Click Coffre : Transférer un stack de 8 outils d'un coffre vers l'inventaire. Doit rester un stack de 8.
+[ ] Mort du joueur : Mourir avec des stacks. Vérifier qu'ils sont au sol et se ramassent toujours en stacks.
+[ ] Jeter (Touche Q) : Jeter un stack de 8 outils complet. Doit être une seule entité au sol qui se ramasse en 8.
+
+--- CATEGORIE 5 : CAS LIMITES ---
+[ ] Inventaire plein : Utiliser un stack de 8 outils alors que tout l'inventaire est plein. Le surplus (les 7 neufs) doit tomber au sol au lieu de disparaître.
+[ ] Armor Stacking : Vérifier que les bottes/casques neufs se stackent aussi (si activé) mais se séparent dès qu'on prend des dégâts.
+[ ] Craft : Vérifier que crafter plusieurs outils à la suite (si possible via mod/recette) les stacke correctement.
+
+=========================================================
+Légende : [ ] À tester | [X] Validé
+=========================================================

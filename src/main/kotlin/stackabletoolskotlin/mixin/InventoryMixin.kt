@@ -1,6 +1,7 @@
 package stackabletoolskotlin.mixin
 
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.ArmorItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.PotionItem
 import net.minecraft.item.ToolItem
@@ -23,12 +24,25 @@ abstract class InventoryMixin {
     @Shadow
     abstract fun setStack(slot: Int, stack: ItemStack)
 
+    @Shadow
+    abstract fun size(): Int
+
     @Inject(method = ["insertStack", "(Lnet/minecraft/item/ItemStack;)Z"], at = [At("HEAD")], cancellable = true)
     private fun onInsertStack(stack: ItemStack, cir: CallbackInfoReturnable<Boolean>) {
         val inv = this as Any as PlayerInventory
+        // On vérifie seulement si c'est un Tool/Potion configurable (ceux dont la config permet de stacker)
         if (stack.isEmpty || inv.player.getWorld().isClient) return
+        
+        // Si c'est un item normal (non-stackable par le mod), on laisse Minecraft faire
         if (!StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) return
 
+        // REGLE ESSENTIELLE : Si l'objet est déjà abîmé, on refuse catégoriquement l'insertion gérée par le mod
+        // pour que Minecraft le considère comme non-stackable (1 item par slot).
+        if (stack.isDamaged && (stack.item is ToolItem || stack.item is ArmorItem)) {
+            return
+        }
+
+        // Si l'objet est NEUF, on applique notre logique de stack custom
         val cfg = ConfigManager.getConfig()
         val maxStackSize = when {
             stack.item is ToolItem -> cfg.maxToolStackSize
@@ -40,10 +54,10 @@ abstract class InventoryMixin {
         val originalCount = stack.count
         val itemName = stack.name.string
 
-        CustomLogger.info("Tentative d'insertion : $itemName x$originalCount (Durabilité: ${stack.damage})")
+        CustomLogger.info("Gestion Custom Insert : $itemName x$originalCount (Durabilité: ${stack.damage})")
 
-        // 1) Fusionner avec les piles existantes compatibles (même durabilité / même NBT)
-        for (slot in 0 until inv.main.size) {
+        // 1) Fusionner avec les piles existantes compatibles (MÊME DURABILITÉ 0)
+        for (slot in 0 until 36) { 
             if (remaining <= 0) break
             val existing = getStack(slot)
             if (existing.isEmpty) continue
@@ -61,22 +75,19 @@ abstract class InventoryMixin {
 
         // 2) Placer dans des emplacements vides si nécessaire
         if (remaining > 0) {
-            for (slot in 0 until inv.main.size) {
+            for (slot in 0 until 36) {
                 if (remaining <= 0) break
                 val existing = getStack(slot)
-                if (existing.isEmpty) {
-                    val toPut = stack.copy()
+                if (existing.isEmpty || existing.item.name.string == "Air") {
                     val countToPut = minOf(remaining, maxStackSize)
+                    val toPut = stack.copy()
                     toPut.count = countToPut
+                    
                     setStack(slot, toPut)
                     remaining -= countToPut
-                    CustomLogger.info("Placement slot vide $slot : $countToPut items")
+                    CustomLogger.info("Placement slot vide $slot : $countToPut items (Restant: $remaining)")
                 }
             }
-        }
-
-        if (remaining < originalCount) {
-            CustomLogger.info("Insertion réussie : ${originalCount - remaining} insérés, $remaining restants")
         }
 
         stack.count = remaining
