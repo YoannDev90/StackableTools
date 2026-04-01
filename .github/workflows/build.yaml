@@ -85,8 +85,10 @@ jobs:
       - name: Check if tag exists
         id: check_tag
         run: |
+          git fetch --tags
           if git rev-parse "v${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
             echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "Tag v${{ steps.get_version.outputs.version }} already exists. Skipping tag creation and push."
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
@@ -97,7 +99,6 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag v${{ steps.get_version.outputs.version }}
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin v${{ steps.get_version.outputs.version }}
 
       - name: Create GitHub Release
@@ -108,7 +109,8 @@ jobs:
           body: ${{ github.event.inputs.release-body || format('Release v%s', steps.get_version.outputs.version) }}
           draft: false
           prerelease: false
-          files: build/libs/stackabletoolskotlin-${{ steps.get_version.outputs.version }}.jar
+          make_latest: true
+          files: build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
