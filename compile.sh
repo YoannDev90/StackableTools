@@ -153,7 +153,7 @@ if [ "$EXIT_CODE" -eq 0 ]; then
             echo "Ancien fichier supprimé."
         fi
         mv "$JAR_PATH" "$DEST_DIR"
-        echo "Fichier JAR déplacé vers la destination."
+        echo "Fichier JAR déplacé vers la destination: $DEST_DIR"
         if [ "$RUN_TESTS" = true ]; then
             echo "Exécution des tests..."
             ./gradlew test ${NO_DAEMON:+--no-daemon} ${WARN:+--warning-mode=none} || { echo "Tests échoués"; exit 1; }
