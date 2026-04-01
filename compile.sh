@@ -86,22 +86,38 @@ clear
 
 CONFIG_FILE="compile_config.json"
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Erreur : Le fichier de configuration $CONFIG_FILE est introuvable."
+    if [ -f "compile_config_sample.json" ]; then
+        echo "⚠️  $CONFIG_FILE introuvable. Création à partir du sample..."
+        cp compile_config_sample.json compile_config.json
+        echo "✅ $CONFIG_FILE créé. Merci de le modifier selon tes besoins avant de relancer."
+        exit 0
+    else
+        echo "❌ Erreur : $CONFIG_FILE et son sample sont introuvables."
+        exit 1
+    fi
+fi
+
+# Lecture de la config avec jq
+OUTPUT_PATH=$(jq -r '.output_path // empty' "$CONFIG_FILE")
+MC_VERSION=$(jq -r '.minecraft_version // empty' "$CONFIG_FILE")
+LOADER_VERSION=$(jq -r '.fabric_loader_version // empty' "$CONFIG_FILE")
+
+# Ancienne config (rétrocompatibilité si présente)
+LAUNCHER_DIR=$(jq -r '.launcherDir // empty' "$CONFIG_FILE")
+INSTANCE_DIR=$(jq -r '.instanceDir // empty' "$CONFIG_FILE")
+LOCATION=$(jq -r '.location // empty' "$CONFIG_FILE")
+
+# Définition du répertoire de destination
+if [ -n "$OUTPUT_PATH" ] && [ "$OUTPUT_PATH" != "null" ]; then
+    DEST_DIR="$OUTPUT_PATH"
+elif [ -n "$LAUNCHER_DIR" ] && [ "$LAUNCHER_DIR" != "null" ]; then
+    DEST_DIR="${LAUNCHER_DIR%/}/${INSTANCE_DIR%/}/${LOCATION%/}/"
+else
+    echo "❌ Erreur : Configuration incomplète dans $CONFIG_FILE (manque 'output_path')."
     exit 1
 fi
 
-LAUNCHER_DIR=$(jq -r '.launcherDir' "$CONFIG_FILE")
-INSTANCE_DIR=$(jq -r '.instanceDir' "$CONFIG_FILE")
-LOCATION=$(jq -r '.location' "$CONFIG_FILE")
-
-if [ -z "$LAUNCHER_DIR" ] || [ -z "$INSTANCE_DIR" ] || [ -z "$LOCATION" ]; then
-    echo "Erreur : chemins de configuration invalides dans $CONFIG_FILE."
-    exit 1
-fi
-
-DEST_DIR="${LAUNCHER_DIR%/}/${INSTANCE_DIR%/}/${LOCATION%/}/"
-
-if [ ! -d "$DEST_DIR" ]; then
+if [ ! -d "$DEST_DIR" ] && [ "$DRY_RUN" = false ]; then
     if ! mkdir -p "$DEST_DIR"; then
         echo "Erreur : Impossible de créer le répertoire de destination $DEST_DIR."
         exit 1
@@ -109,6 +125,8 @@ if [ ! -d "$DEST_DIR" ]; then
     echo "Le répertoire de destination a été créé avec succès."
 fi
 
+echo "🚀 Préparation du build pour Minecraft ${MC_VERSION:-inconnu}..."
+echo "📂 Destination : $DEST_DIR"
 echo "Compilation du projet... $(date '+%T')"
 
 if [ "$REBUILD" = true ]; then
@@ -145,15 +163,24 @@ fi
 
 if [ "$EXIT_CODE" -eq 0 ]; then
     echo "Compilation terminée avec succès ! $(date '+%T')"
-    JAR_PATH="build/libs/stackabletoolskotlin-1.0.0.jar"
+
+    # Trouver le JAR généré (on évite -sources et -dev)
+    JAR_PATH=$(ls build/libs/*.jar | grep -v "\-sources" | grep -v "\-dev" | head -n 1)
 
     if [ -f "$JAR_PATH" ]; then
-        if [ -f "$DEST_DIR/stackabletoolskotlin-1.0.0.jar" ]; then
-            rm "$DEST_DIR/stackabletoolskotlin-1.0.0.jar"
-            echo "Ancien fichier supprimé."
+        if [ "$DRY_RUN" = true ]; then
+            echo "Dry run: cp $JAR_PATH $DEST_DIR"
+        else
+            # Nettoyage avant copie
+            BASENAME=$(basename "$JAR_PATH")
+            if [ -f "$DEST_DIR/$BASENAME" ]; then
+                rm "$DEST_DIR/$BASENAME"
+                echo "Ancien fichier $BASENAME supprimé dans la destination."
+            fi
+            cp "$JAR_PATH" "$DEST_DIR"
+            echo "Fichier JAR ($BASENAME) copié vers $DEST_DIR"
         fi
-        mv "$JAR_PATH" "$DEST_DIR"
-        echo "Fichier JAR déplacé vers la destination: $DEST_DIR"
+
         if [ "$RUN_TESTS" = true ]; then
             echo "Exécution des tests..."
             ./gradlew test ${NO_DAEMON:+--no-daemon} ${WARN:+--warning-mode=none} || { echo "Tests échoués"; exit 1; }
