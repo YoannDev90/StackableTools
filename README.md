@@ -1,6 +1,6 @@
 # 🛠️ StackableTools (Kotlin Edition)
 
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/YoannDev90/StackableToolsKotlin/blob/master/LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/YoannDev90/StackableToolsKotlin?style=for-the-badge)](https://github.com/YoannDev90/StackableToolsKotlin/releases)
