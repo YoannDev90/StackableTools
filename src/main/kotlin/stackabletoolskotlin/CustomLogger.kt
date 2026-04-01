@@ -3,24 +3,14 @@ package stackabletoolskotlin
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import net.minecraft.server.MinecraftServer
-import net.minecraft.text.Text
 import stackabletoolskotlin.config.ConfigManager
 
 /**
- * Logger personnalisé qui écrit les messages à la fois dans la console, dans un fichier et dans le chat
+ * Logger personnalisé qui écrit les messages à la fois dans la console et dans un fichier
  */
 object CustomLogger {
     private const val LOG_FILE_PATH = "logs/stackabletoolskotlin.log"
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    private var server: MinecraftServer? = null
-
-    /**
-     * Définit l'instance du serveur pour les logs de chat
-     */
-    fun setServer(minecraftServer: MinecraftServer?) {
-        server = minecraftServer
-    }
 
     /**
      * Log un message INFO
@@ -54,31 +44,20 @@ object CustomLogger {
         val config = ConfigManager.getConfig()
         if (!config.enableLogging) return
 
+        // On ne log que si on est sur le thread serveur pour éviter les doublons client/serveur
+        val isServerThread = Thread.currentThread().name.contains("Server thread", ignoreCase = true)
+
         val timestamp = LocalDateTime.now().format(formatter)
         val formattedMessage = "[$level][$timestamp] $message"
 
-        // Console
-        if (config.logInConsole) {
+        // Console (si serveur ou si autorisé)
+        if (config.logInConsole && isServerThread) {
             println(formattedMessage.toAscii())
         }
 
-        // Fichier
-        if (config.logInFile) {
+        // Fichier (uniquement via serveur pour éviter les conflits d'accès)
+        if (config.logInFile && isServerThread) {
             writeToFile(formattedMessage)
-        }
-
-        // Chat Minecraft
-        if (config.logInChat) {
-            writeToChat(formattedMessage)
-        }
-    }
-
-    /**
-     * Envoie le message à tous les joueurs en ligne
-     */
-    private fun writeToChat(message: String) {
-        server?.playerManager?.playerList?.forEach { player ->
-            player.sendMessage(Text.literal("§7[StackableTools]§r $message"), false)
         }
     }
 

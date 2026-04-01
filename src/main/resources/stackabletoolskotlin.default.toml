@@ -12,7 +12,6 @@ enable = true
 level = "INFO"
 in_file = true
 in_console = true
-in_chat = true
 
 [stacking]
 enable = true

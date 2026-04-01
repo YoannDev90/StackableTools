@@ -8,7 +8,6 @@ data class StackableToolsKotlinConfig(
     var logLevel: String = "INFO",
     var logInFile: Boolean = true,
     var logInConsole: Boolean = true,
-    var logInChat: Boolean = true,
 
     var enableStacking: Boolean = true,
     var maxStackSize: Long = 64L,

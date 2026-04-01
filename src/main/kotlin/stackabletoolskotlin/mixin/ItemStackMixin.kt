@@ -10,30 +10,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import stackabletoolskotlin.CustomLogger
 import stackabletoolskotlin.StackableToolsKotlinUtils
 
-@Mixin(ItemStack::class)
+@Mixin(ItemStack::class, priority = 900)
 abstract class ItemStackMixin {
 
-    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"], at = [At("HEAD")])
+    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"], at = [At("HEAD")], cancellable = true)
     private fun onDamage(amount: Int, entity: LivingEntity, breakCallback: java.util.function.Consumer<LivingEntity>, ci: CallbackInfo) {
         val stack = this as Any as ItemStack
         
         // Si c'est un joueur et que l'objet est stacké (plus de 1) et que c'est un outil configurable
-        if (entity is PlayerEntity && stack.count > 1 && StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) {
+        if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) {
             val player = entity
             
-            // Créer le stack restant (le reste de la pile qui ne prend pas de dégâts)
-            val leftover = stack.copy()
-            leftover.count = stack.count - 1
+            // On sauvegarde le count d'origine
+            val countBefore = stack.count
             
-            // L'item en cours d'utilisation devient unitaire pour isoler ses dégâts
+            // ÉTAPE 1 : On réduit le stack actuel à 1 IMMEDIATEMENT pour que les dégâts ne s'appliquent qu'à cet item
             stack.count = 1
             
-            CustomLogger.info("Déstackage automatique : 1 outil conservé pour usage, ${leftover.count} renvoyés dans l'inventaire.")
+            // ÉTAPE 2 : Créer le stack restant (les outils NEUFS qui ne prennent PAS de dégâts)
+            val leftover = stack.copy()
+            leftover.count = countBefore - 1
+            
+            // On s'assure que le leftover reste NEUF (0 dégâts) avant les dégâts du premier
+            leftover.damage = 0
+            
+            CustomLogger.info("Déstackage préventif : 1 outil prend les dégâts, ${leftover.count} outils neufs protégés dans l'inventaire.")
 
-            // Tenter de replacer le reste dans l'inventaire (ou drop si plein)
+            // ÉTAPE 3 : Tenter de replacer les outils neufs ailleurs dans l'inventaire
             if (!player.inventory.insertStack(leftover)) {
                 player.dropItem(leftover, false, true)
             }
+            
+            // On laisse l'exécution continuer : les dégâts s'appliqueront uniquement sur 'stack' qui a maintenant un count de 1.
         }
     }
 }
