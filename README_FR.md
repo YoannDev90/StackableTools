@@ -25,6 +25,30 @@ StackableTools est un mod Minecraft pour Fabric qui permet de stacker les outils
 2. Placez le `.jar` dans `mods/` de votre instance Minecraft.
 3. Lancez Minecraft avec le profil Fabric.
 
+## Configuration facile
+Le fichier de config est généré dans `config/stackabletoolskotlin.toml` (ou `src/main/resources/stackabletoolskotlin.default.toml` par défaut).
+
+Options disponibles :
+- `logging.enable` (true/false)
+- `logging.level` (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)
+- `stacking.enable` (true/false)
+- `stacking.max_stack_size` (64 par défaut)
+- `stacking.max_tool_stack_size` (8 par défaut)
+- `stacking.max_potion_stack_size` (16 par défaut)
+- `stacking.active_categories` (`["tools","potions"]` par défaut)
+- `stacking.manual_item_ids` (liste de `minecraft:item_id`)
+- `stacking.excluded_item_ids` (liste de `minecraft:item_id`)
+
+Exemples :
+```toml
+stacking.enable = true
+stacking.active_categories = ["tools", "potions", "armor"]
+stacking.manual_item_ids = ["minecraft:shield", "minecraft:elytra"]
+stacking.excluded_item_ids = ["minecraft:stone_axe"]
+```
+
+> Astuce : la forme courte (`"diamond_hoe"`) est supportée pour les items personnalisés pour plus de facilité.
+
 > [!TIP] 
 > Utilisez Freesm Launcher (fork de Prism) pour une installation et une gestion de modpack optimisées.
 

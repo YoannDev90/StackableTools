@@ -1,8 +1,28 @@
+# Configuration pour StackableToolsKotlin
+# - enable : activer/désactiver le mod
+# - max_stack_size : valeur globale limite (64 par défaut)
+# - max_tool_stack_size : taille de pile pour les outils
+# - max_potion_stack_size : taille de pile pour les potions
+# - active_categories : tools, potions, armor, all
+# - manual_item_ids : liste d'ids d'items à rendre empilables manuellement
+# - excluded_item_ids : liste d'ids d'items à exclure explicitement
+
 [logging]
 enable = true
 level = "INFO"
+in_file = true
+in_console = true
+in_chat = true
 
 [stacking]
-max_stack_size = 64
 enable = true
+max_stack_size = 64
+max_tool_stack_size = 8
+max_potion_stack_size = 16
+active_categories = ["tools", "potions"]
 manual_item_ids = []
+excluded_item_ids = []
+
+# Exemples :
+# manual_item_ids = ["minecraft:diamond_hoe", "minecraft:elytra"]
+# excluded_item_ids = ["minecraft:stone_axe"]
