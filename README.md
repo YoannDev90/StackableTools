@@ -1,64 +1,73 @@
-# StackableTools
+# 🛠️ StackableTools (Kotlin Edition)
 
-- Français : [README_FR.md](README_FR.md)
-- English : this file
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
+[![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/YoannDev90/StackableToolsKotlin/blob/master/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/YoannDev90/StackableToolsKotlin?style=for-the-badge)](https://github.com/YoannDev90/StackableToolsKotlin/releases)
 
-StackableTools is a Minecraft Fabric mod that makes tools stackable for improved inventory management.
+---
 
-## Download links
-- https://www.curseforge.com/minecraft/mc-mods/stackabletools
-- https://modrinth.com/mod/stackabletools
+- 🇫🇷 Français : [README_FR.md](README_FR.md)
+- 🇬🇧 English : this file
 
-## Main features
-- Stack tools such as swords, pickaxes, shovels, axes, shears, etc.
-- Fabric compatibility with Minecraft 1.20.x (to be verified for specific versions)
-- Configurable options via `config/stackabletools.json`
-- Uses mixins for clean and efficient integration
+**StackableTools** is a powerful Minecraft Fabric mod rewritten in Kotlin that makes tools stackable, revolutionizing your inventory management without breaking the game's balance.
 
-## Requirements
-- Java 20+ (or Java 17 if targeting older Minecraft versions)
-- Gradle 8+
-- Fabric Loader & Fabric API for client runtime
+## 📥 Download Links
+| Platform       | Link                                                                                  |
+| :------------- | :------------------------------------------------------------------------------------ |
+| **CurseForge** | [Download on CurseForge](https://www.curseforge.com/minecraft/mc-mods/stackabletools) |
+| **Modrinth**   | [Download on Modrinth](https://modrinth.com/mod/stackabletools)                       |
 
-## User installation
-1. Download the `.jar` from the GitHub releases.
-2. Place the `.jar` in the `mods/` folder of your Minecraft instance.
-3. Launch Minecraft with the Fabric profile.
+## ✨ Main Features
+- ⚔️ **Stackable Tools**: Swords, pickaxes, shovels, axes, and more are now stackable!
+- 🧪 **Potions Support**: Stack your potions (up to 16 by default).
+- 🛡️ **Durability Isolation**: Only the item you are using takes damage. The rest of the stack stays pristine!
+- ⚙️ **Fully Configurable**: Fine-tune stack sizes for each category (Tools, Potions, Enchants).
+- 🔄 **Mending Compatible**: Works perfectly with Mending and Unbreaking.
+- 🏗️ **Smart Insertion**: Picked-up items will automatically merge into existing stacks.
+
+## ⚙️ Configuration (Developer)
+> [!IMPORTANT]
+> To build the mod yourself, you **must** configure your environment first.
+
+1.  Open [compile_config.json](compile_config.json) (or copy it from [compile_config_sample.json](compile_config_sample.json)).
+2.  Update the fields to match your local environment:
+    ```json
+    {
+      "output_path": "path/to/your/custom/output",
+      "minecraft_version": "1.21.4",
+      "fabric_loader_version": "0.16.9"
+    }
+    ```
+3.  Run the build script:
+    ```bash
+    ./compile.sh
+    ```
+
+## 🚀 Installation (User)
+1.  Download the latest `.jar` from the [Releases](https://github.com/YoannDev90/StackableToolsKotlin/releases) page.
+2.  Install **Fabric Loader** and **Fabric API**.
+3.  Place the `.jar` in your `mods/` folder.
+4.  Launch and enjoy a cleaner inventory!
 
 > [!TIP] 
-> Use Freesm Launcher (a fork of Prism) for streamlined modpack installation and management.
+> We recommend using **Freesm Launcher** (a fork of Prism) for the best modding experience.
 
-## Build and run (developer)
-```bash
-git clone https://github.com/yoann/StackableToolsKotlin.git
-cd StackableToolsKotlin
-./gradlew build
-```
-- Output artifact: `build/libs/stackabletoolskotlin-<version>.jar`
-- Local run directory: `run/`
+## 🛠️ Requirements
+- ☕ **Java 21+** (Targeting latest stable JVM)
+- 🐘 **Gradle 8.11+**
+- 🧶 **Fabric Loader**
 
-## GitHub Actions workflow
-- `build`: compile + tests.
-- `release`: triggered by `workflow_dispatch` or `master`, creates git tag, GitHub Release, and publishes to CurseForge + Modrinth.
-- Ensure secrets are configured:
-  - `GITHUB_TOKEN`, `CURSEFORGE_API_KEY`, `MODRINTH_API_TOKEN`,
-  - `CURSEFORGE_PROJECT_ID`, `MODRINTH_PROJECT_ID`.
+## 🤝 Contributing
+Contributions are what make the open source community such an amazing place to learn, inspire, and create.
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-### `workflow_dispatch` inputs
-- `release-title` (optional)
-- `release-body` (optional)
-- `release-tag` (optional)
-- `publish-curseforge-modrinth` (true|false)
+## 📜 License
+CC0 1.0 Universal. See [LICENSE](LICENSE) for details.
 
-## Contributing
-1. Fork the project.
-2. Create a feature/fix branch.
-3. Open a PR with description and tests.
-
-## License
-CC0 1.0 Universal. See [LICENSE](https://github.com/YoannDev90/StackableToolsKotlin/blob/master/LICENSE)
-
-## Thanks
-- Fabric
-- SpongePowered Mixin
-- Minecraft modding community
+---
+*Made with ❤️ by YoannDev90*
