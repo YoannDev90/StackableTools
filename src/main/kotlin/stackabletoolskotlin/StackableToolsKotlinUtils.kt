@@ -18,13 +18,17 @@ object StackableToolsKotlinUtils {
         if (a.item !== b.item) return false
         
         // REGLE : On ne stacke que les outils NEUFS (damage == 0).
-        // Si un outil est usagé, il doit rester seul pour éviter de re-stacker pendant l'usage.
         if (a.item is ToolItem || a.item is ArmorItem) {
+            // Si l'un des deux a ne serait-ce que 1 point de dégât, on refuse le stack.
             if (a.damage > 0 || b.damage > 0) return false
         }
 
+        // Pour les autres items (potions, etc), on vérifie la durabilité exacte
         if (a.damage != b.damage) return false
+        
+        // On vérifie le NBT (enchantements, noms, etc) via la méthode native de Minecraft
         if (!ItemStack.canCombine(a, b)) return false
+        
         return true
     }
 
