@@ -44,3 +44,8 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+
+local.properties
+# Full gradle folder, to avoid pushing binaries and auto-generated config files
+gradle
