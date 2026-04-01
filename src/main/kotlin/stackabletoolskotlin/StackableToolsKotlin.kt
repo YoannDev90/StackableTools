@@ -4,6 +4,7 @@ package stackabletoolskotlin
 import java.nio.charset.StandardCharsets
 
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import org.slf4j.LoggerFactory
 import stackabletoolskotlin.CustomLogger
 import stackabletoolskotlin.config.ConfigManager
@@ -36,6 +37,15 @@ object StackableToolsKotlin : ModInitializer {
 		val config = ConfigManager.getConfig()
 		if (!config.isLoaded) {
 			CustomLogger.info("Configuration stackabletoolskotlin chargée par défaut via ConfigManager")
+		}
+
+		// Enregistrement de l'instance du serveur pour les logs de chat
+		ServerLifecycleEvents.SERVER_STARTING.register { server ->
+			CustomLogger.setServer(server)
+		}
+
+		ServerLifecycleEvents.SERVER_STOPPING.register { _ ->
+			CustomLogger.setServer(null)
 		}
 	}
 }
