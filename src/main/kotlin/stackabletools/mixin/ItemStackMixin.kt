@@ -1,4 +1,4 @@
-package stackabletoolskotlin.mixin
+package stackabletools.mixin
 
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.Unique
 import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
-import stackabletoolskotlin.CustomLogger
-import stackabletoolskotlin.StackableToolsKotlinUtils
+import stackabletools.CustomLogger
+import stackabletools.StackableToolsUtils
 
 @Mixin(ItemStack::class, priority = 900)
 abstract class ItemStackMixin {
@@ -24,7 +24,7 @@ abstract class ItemStackMixin {
         val stack = this as Any as ItemStack
         
         // Si c'est un joueur et que l'objet est stacké (plus de 1) et que c'est un outil configurable
-        if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) {
+        if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsUtils.isToolOrManuallyRegistered(stack)) {
             val player = entity
             
             // On ne sépare que si l'outil est encore NEUF (pour éviter les boucles si déjà abîmé)

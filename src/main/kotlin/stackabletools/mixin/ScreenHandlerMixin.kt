@@ -1,4 +1,4 @@
-package stackabletoolskotlin.mixin
+package stackabletools.mixin
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
-import stackabletoolskotlin.StackableToolsKotlinUtils
+import stackabletools.StackableToolsUtils
 
 @Mixin(ScreenHandler::class)
 abstract class ScreenHandlerMixin {
@@ -28,10 +28,10 @@ abstract class ScreenHandlerMixin {
 
             // Si on essaie de poser un stack d'outils sur un autre stack d'outils identique
             if (!cursorStack.isEmpty && !slotStack.isEmpty && 
-                StackableToolsKotlinUtils.isToolOrManuallyRegistered(cursorStack) &&
-                StackableToolsKotlinUtils.canStackSameDurability(cursorStack, slotStack)) {
+                StackableToolsUtils.isToolOrManuallyRegistered(cursorStack) &&
+                StackableToolsUtils.canStackSameDurability(cursorStack, slotStack)) {
                 
-                val cfg = stackabletoolskotlin.config.ConfigManager.getConfig()
+                val cfg = stackabletools.config.ConfigManager.getConfig()
                 val maxStack = if (cursorStack.item is net.minecraft.item.ToolItem) cfg.maxToolStackSize else cfg.maxPotionStackSize
                 
                 val canTransfer = (maxStack.toInt() - slotStack.count).coerceAtLeast(0)

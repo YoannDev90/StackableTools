@@ -1,15 +1,15 @@
 
-package stackabletoolskotlin
+package stackabletools
 
 import java.nio.charset.StandardCharsets
 
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
-import stackabletoolskotlin.CustomLogger
-import stackabletoolskotlin.config.ConfigManager
+import stackabletools.CustomLogger
+import stackabletools.config.ConfigManager
 
-object StackableToolsKotlin : ModInitializer {
-	private val logger = LoggerFactory.getLogger("stackabletoolskotlin")
+object StackableTools : ModInitializer {
+	private val logger = LoggerFactory.getLogger("stackabletools")
 
 	private fun getModVersion(): String {
 		// Essaye de lire la version depuis fabric.mod.json dans le jar
@@ -30,12 +30,12 @@ object StackableToolsKotlin : ModInitializer {
 
 	override fun onInitialize() {
 		val version = getModVersion()
-		CustomLogger.info("Initialisation de StackableToolsKotlin version $version")
+		CustomLogger.info("Initialisation de StackableTools version $version")
 
 		// Force le chargement et la création de la config au démarrage si elle n'existe pas
 		val config = ConfigManager.getConfig()
 		if (!config.isLoaded) {
-			CustomLogger.info("Configuration stackabletoolskotlin chargée par défaut via ConfigManager")
+			CustomLogger.info("Configuration stackabletools chargée par défaut via ConfigManager")
 		}
 	}
 }

@@ -1,22 +1,22 @@
-package stackabletoolskotlin.config
+package stackabletools.config
 
 import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
 import java.io.File
 import java.nio.charset.StandardCharsets
-import stackabletoolskotlin.CustomLogger
+import stackabletools.CustomLogger
 
 /**
  * Gestionnaire de configuration TOML
  */
 object ConfigManager {
-    private const val CONFIG_FILE_PATH = "config/stackabletoolskotlin.toml"
-    private var config: StackableToolsKotlinConfig? = null
+    private const val CONFIG_FILE_PATH = "config/stackabletools.toml"
+    private var config: StackableToolsConfig? = null
 
     /**
      * Charge la configuration depuis le fichier (ou crée par défaut)
      */
-    fun loadConfig(): StackableToolsKotlinConfig {
+    fun loadConfig(): StackableToolsConfig {
         val configFile = File(CONFIG_FILE_PATH)
         
         if (!configFile.exists()) {
@@ -31,7 +31,7 @@ object ConfigManager {
     /**
      * Sauvegarde la configuration dans le fichier TOML
      */
-    fun saveConfig(config: StackableToolsKotlinConfig) {
+    fun saveConfig(config: StackableToolsConfig) {
         val configFile = File(CONFIG_FILE_PATH)
         val writer = TomlWriter()
 
@@ -56,14 +56,14 @@ object ConfigManager {
     /**
      * Récupère la configuration actuelle
      */
-    fun getConfig(): StackableToolsKotlinConfig {
+    fun getConfig(): StackableToolsConfig {
         if (config == null) {
             config = loadConfig()
         }
         return config!!
     }
 
-    private fun loadConfigFromFile(configFile: File): StackableToolsKotlinConfig {
+    private fun loadConfigFromFile(configFile: File): StackableToolsConfig {
         try {
             val toml = Toml().read(configFile)
 
@@ -79,7 +79,7 @@ object ConfigManager {
                 ?.mapNotNull { it?.trim()?.takeIf { it.isNotEmpty() } }
                 ?: listOf()
 
-            val loadedConfig = StackableToolsKotlinConfig(
+            val loadedConfig = StackableToolsConfig(
                 enableLogging = toml.getBoolean("logging.enable", true),
                 logLevel = toml.getString("logging.level", "INFO"),
                 logInFile = toml.getBoolean("logging.in_file", true),
@@ -97,13 +97,13 @@ object ConfigManager {
             return loadedConfig
         } catch (e: Exception) {
             CustomLogger.error("Erreur lors du chargement de la configuration: ${e.message}")
-            val defaultConfig = StackableToolsKotlinConfig()
+            val defaultConfig = StackableToolsConfig()
             config = defaultConfig
             return defaultConfig
         }
     }
 
-    private const val DEFAULT_CONFIG_RESOURCE = "/stackabletoolskotlin.default.toml"
+    private const val DEFAULT_CONFIG_RESOURCE = "/stackabletools.default.toml"
 
     private fun createDefaultConfig(configFile: File) {
         try {
@@ -127,7 +127,7 @@ object ConfigManager {
 
     private fun buildDefaultConfigString(): String {
         return buildString {
-            appendLine("# Configuration pour StackableToolsKotlin")
+            appendLine("# Configuration pour StackableTools")
             appendLine("#  - enable : activer/désactiver le mod")
             appendLine("#  - max_stack_size : limite globale (64 par défaut, utile pour override full stack)")
             appendLine("#  - max_tool_stack_size : taille maximale pour les outils")
@@ -157,7 +157,7 @@ object ConfigManager {
         }
     }
 
-    private fun updateConfigValue(config: StackableToolsKotlinConfig, key: String, value: Any): StackableToolsKotlinConfig {
+    private fun updateConfigValue(config: StackableToolsConfig, key: String, value: Any): StackableToolsConfig {
         return when (key) {
             "logging.enable" -> config.copy(enableLogging = value as Boolean)
             "logging.level" -> config.copy(logLevel = value as String)
