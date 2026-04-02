@@ -1,4 +1,4 @@
-# Configuration pour StackableToolsKotlin
+# Configuration pour StackableTools
 # - enable : activer/désactiver le mod
 # - max_stack_size : valeur globale limite (64 par défaut)
 # - max_tool_stack_size : taille de pile pour les outils

@@ -1,15 +1,15 @@
-package stackabletoolskotlin
+package stackabletools
 
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import stackabletoolskotlin.config.ConfigManager
+import stackabletools.config.ConfigManager
 
 /**
  * Logger personnalisé qui écrit les messages à la fois dans la console et dans un fichier
  */
 object CustomLogger {
-    private const val LOG_FILE_PATH = "logs/stackabletoolskotlin.log"
+    private const val LOG_FILE_PATH = "logs/stackabletools.log"
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     /**

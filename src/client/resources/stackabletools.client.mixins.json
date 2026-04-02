@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "stackabletoolskotlin.mixin.client",
+	"package": "stackabletools.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [],
 	"injectors": {

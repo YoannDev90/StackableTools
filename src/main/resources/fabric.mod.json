@@ -1,43 +1,43 @@
 {
 	"schemaVersion": 1,
-	"id": "stackabletoolskotlin",
+	"id": "stackabletools",
 	"version": "${version}",
-	"name": "StackableToolsKotlin",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "StackableTools",
+	"description": "Un mod pour rendre les outils et autres objets empilables dans Minecraft.",
 	"authors": [
-		"Me!"
+		"Yoann"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/YoannDev90/StackableTools",
+		"sources": "https://github.com/YoannDev90/StackableTools"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/stackabletoolskotlin/icon.png",
+	"icon": "assets/stackabletools/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "stackabletoolskotlin.StackableToolsKotlin",
+				"value": "stackabletools.StackableTools",
 				"adapter": "kotlin"
 			}
 		],
 		"client": [
 			{
-				"value": "stackabletoolskotlin.StackableToolsKotlinClient",
+				"value": "stackabletools.StackableToolsClient",
 				"adapter": "kotlin"
 			}
 		],
 		"fabric-datagen": [
 			{
-				"value": "stackabletoolskotlin.StackableToolsKotlinDataGenerator",
+				"value": "stackabletools.StackableToolsDataGenerator",
 				"adapter": "kotlin"
 			}
 		]
 	},
 	"mixins": [
-		"stackabletoolskotlin.mixins.json",
+		"stackabletools.mixins.json",
 		{
-			"config": "stackabletoolskotlin.client.mixins.json",
+			"config": "stackabletools.client.mixins.json",
 			"environment": "client"
 		}
 	],

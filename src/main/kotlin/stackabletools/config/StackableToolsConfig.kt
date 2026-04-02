@@ -1,9 +1,9 @@
-package stackabletoolskotlin.config
+package stackabletools.config
 
 /**
- * Classe représentant la configuration du mod StackableToolsKotlin
+ * Classe représentant la configuration du mod StackableTools
  */
-data class StackableToolsKotlinConfig(
+data class StackableToolsConfig(
     var enableLogging: Boolean = true,
     var logLevel: String = "INFO",
     var logInFile: Boolean = true,
@@ -21,6 +21,6 @@ data class StackableToolsKotlinConfig(
     var isLoaded: Boolean = false
 ) {
     companion object {
-        fun getDefault(): StackableToolsKotlinConfig = StackableToolsKotlinConfig()
+        fun getDefault(): StackableToolsConfig = StackableToolsConfig()
     }
 }

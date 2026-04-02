@@ -1,4 +1,4 @@
-package stackabletoolskotlin.mixin
+package stackabletools.mixin
 
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ArmorItem
@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import stackabletoolskotlin.CustomLogger
-import stackabletoolskotlin.StackableToolsKotlinUtils
-import stackabletoolskotlin.config.ConfigManager
+import stackabletools.CustomLogger
+import stackabletools.StackableToolsUtils
+import stackabletools.config.ConfigManager
 
 @Mixin(PlayerInventory::class)
 abstract class InventoryMixin {
@@ -34,7 +34,7 @@ abstract class InventoryMixin {
         if (stack.isEmpty || inv.player.getWorld().isClient) return
         
         // Si c'est un item normal (non-stackable par le mod), on laisse Minecraft faire
-        if (!StackableToolsKotlinUtils.isToolOrManuallyRegistered(stack)) return
+        if (!StackableToolsUtils.isToolOrManuallyRegistered(stack)) return
 
         // REGLE ESSENTIELLE : Si l'objet est déjà abîmé, on refuse catégoriquement l'insertion gérée par le mod
         // pour que Minecraft le considère comme non-stackable (1 item par slot).
@@ -62,7 +62,7 @@ abstract class InventoryMixin {
             val existing = getStack(slot)
             if (existing.isEmpty) continue
             
-            if (StackableToolsKotlinUtils.canStackSameDurability(existing, stack)) {
+            if (StackableToolsUtils.canStackSameDurability(existing, stack)) {
                 val freeSpace = (maxStackSize - existing.count).coerceAtLeast(0)
                 if (freeSpace > 0) {
                     val toMove = minOf(remaining, freeSpace)

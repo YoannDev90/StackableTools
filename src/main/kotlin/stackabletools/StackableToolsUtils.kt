@@ -1,14 +1,14 @@
-package stackabletoolskotlin
+package stackabletools
 
 import net.minecraft.item.ArmorItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.PotionItem
 import net.minecraft.item.ToolItem
 import net.minecraft.registry.Registries
-import stackabletoolskotlin.config.ConfigManager
-import stackabletoolskotlin.config.StackableToolsKotlinConfig
+import stackabletools.config.ConfigManager
+import stackabletools.config.StackableToolsConfig
 
-object StackableToolsKotlinUtils {
+object StackableToolsUtils {
 
     /**
      * Vérifie si deux stacks peuvent être fusionnés (même item, même durabilité, même NBT)
