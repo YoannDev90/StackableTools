@@ -98,22 +98,19 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 # Lecture de la config avec jq
-OUTPUT_PATH=$(jq -r '.output_path // empty' "$CONFIG_FILE")
 MC_VERSION=$(jq -r '.minecraft_version // empty' "$CONFIG_FILE")
 LOADER_VERSION=$(jq -r '.fabric_loader_version // empty' "$CONFIG_FILE")
 
-# Ancienne config (rétrocompatibilité si présente)
+# Configuration des répertoires
 LAUNCHER_DIR=$(jq -r '.launcherDir // empty' "$CONFIG_FILE")
 INSTANCE_DIR=$(jq -r '.instanceDir // empty' "$CONFIG_FILE")
 LOCATION=$(jq -r '.location // empty' "$CONFIG_FILE")
 
 # Définition du répertoire de destination
-if [ -n "$OUTPUT_PATH" ] && [ "$OUTPUT_PATH" != "null" ]; then
-    DEST_DIR="$OUTPUT_PATH"
-elif [ -n "$LAUNCHER_DIR" ] && [ "$LAUNCHER_DIR" != "null" ]; then
+if [ -n "$LAUNCHER_DIR" ] && [ "$LAUNCHER_DIR" != "null" ]; then
     DEST_DIR="${LAUNCHER_DIR%/}/${INSTANCE_DIR%/}/${LOCATION%/}/"
 else
-    echo "❌ Erreur : Configuration incomplète dans $CONFIG_FILE (manque 'output_path')."
+    echo "❌ Erreur : Configuration incomplète dans $CONFIG_FILE (manque 'launcherDir')."
     exit 1
 fi
 
@@ -178,7 +175,7 @@ if [ "$EXIT_CODE" -eq 0 ]; then
                 echo "Ancien fichier $BASENAME supprimé dans la destination."
             fi
             cp "$JAR_PATH" "$DEST_DIR"
-            echo "Fichier JAR ($BASENAME) copié vers $DEST_DIR"
+            echo "Fichier JAR ($BASENAME) copié dans la destination."
         fi
 
         if [ "$RUN_TESTS" = true ]; then
