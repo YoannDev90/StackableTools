@@ -94,15 +94,45 @@ object StackableTools : ModInitializer {
 					.requires { it.hasPermissionLevel(2) }
 					.executes { context ->
 						try {
-							val configFile = File("config/stackabletools.toml")
-							if (configFile.exists() && Desktop.isDesktopSupported()) {
-								Desktop.getDesktop().open(configFile)
+							val configFile = File("config/stackabletools.toml").absoluteFile
+							if (!configFile.exists()) {
+								context.source.sendError(Text.literal("Fichier de config inexistant : ${configFile.path}"))
+								return@executes 1
+							}
+
+							var opened = false
+							
+							// Tentative 1 : Desktop (standard Java)
+							if (Desktop.isDesktopSupported()) {
+								try {
+									Desktop.getDesktop().open(configFile)
+									opened = true
+								} catch (_: Exception) {}
+							}
+
+							// Tentative 2 : xdg-open (Linux standard)
+							if (!opened) {
+								try {
+									Runtime.getRuntime().exec(arrayOf("xdg-open", configFile.path))
+									opened = true
+								} catch (_: Exception) {}
+							}
+
+							// Tentative 3 : gnome-open (Vieux systèmes)
+							if (!opened) {
+								try {
+									Runtime.getRuntime().exec(arrayOf("gnome-open", configFile.path))
+									opened = true
+								} catch (_: Exception) {}
+							}
+
+							if (opened) {
 								context.source.sendFeedback({ Text.literal("Ouverture du fichier de config...") }, false)
 							} else {
-								context.source.sendError(Text.literal("Impossible d'ouvrir le fichier (Desktop non supporté ou fichier manquant)"))
+								context.source.sendError(Text.literal("Impossible d'ouvrir le fichier mécaniquement. Veuillez l'ouvrir manuellement : ${configFile.path}"))
 							}
 						} catch (e: Exception) {
-							context.source.sendError(Text.literal("Erreur : ${e.message}"))
+							context.source.sendError(Text.literal("Erreur critique lors de l'ouverture : ${e.message}"))
 						}
 						1
 					}
