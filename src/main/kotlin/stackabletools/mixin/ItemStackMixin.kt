@@ -42,7 +42,7 @@ abstract class ItemStackMixin {
                     leftover.count = countBefore - 1
                     leftover.damage = 0
                     
-                    CustomLogger.info("Séparation forcée : 1 outil utilisé, ${leftover.count} outils neufs protégés.")
+                    CustomLogger.info("Forced separation: 1 tool used, ${leftover.count} fresh tools protected.")
 
                     // 3. On rend les outils neufs au joueur. 
                     if (!player.inventory.insertStack(leftover)) {

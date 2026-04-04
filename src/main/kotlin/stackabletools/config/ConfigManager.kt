@@ -63,11 +63,11 @@ object ConfigManager {
 
             val config = StackableToolsConfig(logging, stacking, true)
             cachedConfig = config
-            CustomLogger.info("Configuration chargée avec succès depuis $CONFIG_FILE_PATH")
+            CustomLogger.info("Configuration successfully loaded from $CONFIG_FILE_PATH")
             config
         } catch (e: Exception) {
-            CustomLogger.error("CRITICAL: Erreur fatale lors du chargement de la configuration: ${e.message}")
-            CustomLogger.error("La configuration par défaut sera utilisée.")
+            CustomLogger.error("CRITICAL: Fatal error while loading configuration: ${e.message}")
+            CustomLogger.error("Default configuration will be used.")
             val defaultConfig = StackableToolsConfig(isLoaded = true)
             cachedConfig = defaultConfig
             defaultConfig
@@ -109,7 +109,7 @@ object ConfigManager {
             writer.write(data, configFile)
             cachedConfig = config
         } catch (e: Exception) {
-            CustomLogger.error("Erreur sauvegarde config: ${e.message}")
+            CustomLogger.error("Error while saving config: ${e.message}")
         }
     }
 
