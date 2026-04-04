@@ -14,9 +14,12 @@ import stackabletools.CustomLogger
 import stackabletools.config.ConfigManager
 import java.io.File
 import java.awt.Desktop
+import java.nio.file.*
+import kotlin.concurrent.thread
 
 object StackableTools : ModInitializer {
 	private val logger = LoggerFactory.getLogger("stackabletools")
+	private var watchThread: Thread? = null
 
 	private fun getModVersion(): String {
 		// Essaye de lire la version depuis fabric.mod.json dans le jar
@@ -46,6 +49,37 @@ object StackableTools : ModInitializer {
 		}
 
 		registerCommands()
+		startConfigWatcher()
+	}
+
+	private fun startConfigWatcher() {
+		watchThread = thread(isDaemon = true, name = "StackableTools-ConfigWatcher") {
+			try {
+				val watchService = FileSystems.getDefault().newWatchService()
+				val configDir = Paths.get("config")
+				if (!Files.exists(configDir)) Files.createDirectories(configDir)
+				
+				configDir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
+				
+				CustomLogger.info("Surveillance du fichier de config activée (Hot-Reload).")
+
+				while (true) {
+					val key = watchService.take()
+					for (event in key.pollEvents()) {
+						val context = event.context() as Path
+						if (context.toString() == "stackabletools.toml") {
+							// Petit délai pour laisser le temps à l'écriture de se terminer
+							Thread.sleep(200)
+							ConfigManager.loadConfig()
+							CustomLogger.info("Fichier de config modifié : rechargement automatique effectué.")
+						}
+					}
+					if (!key.reset()) break
+				}
+			} catch (e: Exception) {
+				CustomLogger.error("Erreur dans le service de surveillance config : ${e.message}")
+			}
+		}
 	}
 
 	private fun registerCommands() {
