@@ -40,12 +40,12 @@ object StackableTools : ModInitializer {
 
 	override fun onInitialize() {
 		val version = getModVersion()
-		CustomLogger.info("Initialisation de StackableTools version $version")
+		CustomLogger.info("StackableTools version $version initializing")
 
 		// Force le chargement et la création de la config au démarrage si elle n'existe pas
 		val config = ConfigManager.getConfig()
 		if (!config.isLoaded) {
-			CustomLogger.info("Configuration stackabletools chargée par défaut via ConfigManager")
+			CustomLogger.info("StackableTools configuration loaded by default via ConfigManager")
 		}
 
 		registerCommands()
@@ -55,29 +55,25 @@ object StackableTools : ModInitializer {
 	private fun startConfigWatcher() {
 		watchThread = thread(isDaemon = true, name = "StackableTools-ConfigWatcher") {
 			try {
-				val watchService = FileSystems.getDefault().newWatchService()
-				val configDir = Paths.get("config")
-				if (!Files.exists(configDir)) Files.createDirectories(configDir)
+				val configPath = Paths.get("config/stackabletools.toml")
+				var lastModified = if (Files.exists(configPath)) Files.getLastModifiedTime(configPath).toMillis() else 0L
 				
-				configDir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
-				
-				CustomLogger.info("Surveillance du fichier de config activée (Hot-Reload).")
+				CustomLogger.info("Config watcher service enabled (Polling mode).")
 
 				while (true) {
-					val key = watchService.take()
-					for (event in key.pollEvents()) {
-						val context = event.context() as Path
-						if (context.toString() == "stackabletools.toml") {
-							// Petit délai pour laisser le temps à l'écriture de se terminer
-							Thread.sleep(200)
+					Thread.sleep(2000) // Poll every 2 seconds even when game is paused
+					
+					if (Files.exists(configPath)) {
+						val currentModified = Files.getLastModifiedTime(configPath).toMillis()
+						if (currentModified > lastModified) {
+							lastModified = currentModified
 							ConfigManager.loadConfig()
-							CustomLogger.info("Fichier de config modifié : rechargement automatique effectué.")
+							CustomLogger.info("Config file changed: auto-reload performed.")
 						}
 					}
-					if (!key.reset()) break
 				}
 			} catch (e: Exception) {
-				CustomLogger.error("Erreur dans le service de surveillance config : ${e.message}")
+				CustomLogger.error("Error in config watcher service: ${e.message}")
 			}
 		}
 	}
@@ -108,7 +104,7 @@ object StackableTools : ModInitializer {
 							}
 						}
 
-						context.source.sendFeedback({ Text.literal("Items de test donnés !") }, false)
+						context.source.sendFeedback({ Text.literal("Test items given!") }, false)
 						1
 					}
 			)
@@ -118,7 +114,7 @@ object StackableTools : ModInitializer {
 					.requires { it.hasPermissionLevel(2) }
 					.executes { context ->
 						ConfigManager.loadConfig()
-						context.source.sendFeedback({ Text.literal("Configuration rechargée !") }, false)
+						context.source.sendFeedback({ Text.literal("Configuration reloaded!") }, false)
 						1
 					}
 			)
@@ -130,7 +126,7 @@ object StackableTools : ModInitializer {
 						try {
 							val configFile = File("config/stackabletools.toml").absoluteFile
 							if (!configFile.exists()) {
-								context.source.sendError(Text.literal("Fichier de config inexistant : ${configFile.path}"))
+								context.source.sendError(Text.literal("Config file does not exist: ${configFile.path}"))
 								return@executes 1
 							}
 
@@ -161,12 +157,12 @@ object StackableTools : ModInitializer {
 							}
 
 							if (opened) {
-								context.source.sendFeedback({ Text.literal("Ouverture du fichier de config...") }, false)
+								context.source.sendFeedback({ Text.literal("Opening config file...") }, false)
 							} else {
-								context.source.sendError(Text.literal("Impossible d'ouvrir le fichier mécaniquement. Veuillez l'ouvrir manuellement : ${configFile.path}"))
+								context.source.sendError(Text.literal("Mechanically unable to open the file. Please open it manually: ${configFile.path}"))
 							}
 						} catch (e: Exception) {
-							context.source.sendError(Text.literal("Erreur critique lors de l'ouverture : ${e.message}"))
+							context.source.sendError(Text.literal("Critical error during opening: ${e.message}"))
 						}
 						1
 					}
