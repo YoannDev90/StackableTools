@@ -107,7 +107,8 @@ object CustomLogger {
     }
 
     private fun String.toAscii(): String {
-        val normalized = java.text.Normalizer.normalize(this, java.text.Normalizer.Form.NFD)
-        return normalized.replace("[^\\p{ASCII}]".toRegex(), "?")
+        // Suppression de la normalisation qui remplaçait les caractères accentués par des '?'
+        // On garde l'UTF-8 natif de Minecraft qui est supporté par la plupart des terminaux modernes.
+        return this
     }
 }
