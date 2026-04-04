@@ -1,27 +1,34 @@
 # Configuration pour StackableTools
-# - enable : activer/désactiver le mod
-# - max_stack_size : valeur globale limite (64 par défaut)
-# - max_tool_stack_size : taille de pile pour les outils
-# - max_potion_stack_size : taille de pile pour les potions
-# - active_categories : tools, potions, armor, all
-# - manual_item_ids : liste d'ids d'items à rendre empilables manuellement
-# - excluded_item_ids : liste d'ids d'items à exclure explicitement
 
 [logging]
+# Activer ou désactiver les logs du mod
 enable = true
+# Niveau de log (INFO, DEBUG, ERROR)
 level = "INFO"
+# Sauvegarder les logs dans un fichier
 in_file = true
+# Afficher les logs dans la console
 in_console = true
 
 [stacking]
+# Activer ou désactiver l'empilement global
 enable = true
+
+# Tailles de stack maximales par catégorie
 max_stack_size = 64
 max_tool_stack_size = 8
 max_potion_stack_size = 16
-active_categories = ["tools", "potions"]
-manual_item_ids = []
-excluded_item_ids = []
+max_enchanted_book_stack_size = 4
+max_weapon_stack_size = 1
+max_elytra_stack_size = 1
+max_armor_piece_stack_size = 1
 
-# Exemples :
-# manual_item_ids = ["minecraft:diamond_hoe", "minecraft:elytra"]
-# excluded_item_ids = ["minecraft:stone_axe"]
+# Catégories actives (tools, potions, armors, enchant_book, weapon, all)
+# Utilise des enums internes pour une configuration plus robuste
+active_categories = ["tools", "potions", "enchant_book", "weapons"]
+
+# Liste d'IDs d'items (ex: "minecraft:diamond_hoe")
+# Item IDs à ignorer (prioritaire sur les catégories)
+excluded_item_ids = []
+# Item IDs à rendre empilables manuellement
+manual_item_ids = []

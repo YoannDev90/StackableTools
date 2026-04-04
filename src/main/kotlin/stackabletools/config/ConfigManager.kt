@@ -7,11 +7,21 @@ import java.nio.charset.StandardCharsets
 import stackabletools.CustomLogger
 
 /**
- * Gestionnaire de configuration TOML
+ * Gestionnaire de configuration TOML refactorisé
  */
 object ConfigManager {
     private const val CONFIG_FILE_PATH = "config/stackabletools.toml"
-    private var config: StackableToolsConfig? = null
+    private var cachedConfig: StackableToolsConfig? = null
+
+    /**
+     * Récupère la configuration actuelle (charge si nécessaire)
+     */
+    fun getConfig(): StackableToolsConfig {
+        if (cachedConfig == null) {
+            cachedConfig = loadConfig()
+        }
+        return cachedConfig!!
+    }
 
     /**
      * Charge la configuration depuis le fichier (ou crée par défaut)
@@ -20,16 +30,48 @@ object ConfigManager {
         val configFile = File(CONFIG_FILE_PATH)
         
         if (!configFile.exists()) {
-            // Créer le fichier de configuration par défaut
             createDefaultConfig(configFile)
-            return loadConfigFromFile(configFile)
         }
         
-        return loadConfigFromFile(configFile)
+        return try {
+            val toml = Toml().read(configFile)
+            
+            val logging = StackableToolsConfig.LoggingConfig(
+                enable = toml.getBoolean("logging.enable", true),
+                level = toml.getString("logging.level", "INFO"),
+                inFile = toml.getBoolean("logging.in_file", true),
+                inConsole = toml.getBoolean("logging.in_console", true)
+            )
+
+            val categoriesRaw = toml.getList<String>("stacking.active_categories") ?: listOf()
+            val categories = categoriesRaw.mapNotNull { StackingCategory.fromString(it) }
+                .ifEmpty { listOf(StackingCategory.TOOLS, StackingCategory.POTIONS, StackingCategory.ENCHANTED_BOOKS, StackingCategory.WEAPONS) }
+
+            val stacking = StackableToolsConfig.StackingConfig(
+                enable = toml.getBoolean("stacking.enable", true),
+                maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
+                maxToolStackSize = toml.getLong("stacking.max_tool_stack_size", 8L),
+                maxPotionStackSize = toml.getLong("stacking.max_potion_stack_size", 16L),
+                maxEnchantedBooksStackSize = toml.getLong("stacking.max_enchanted_books_stack_size", 4L),
+                maxWeaponsStackSize = toml.getLong("stacking.max_weapons_stack_size", 1L),
+                maxElytraStackSize = toml.getLong("stacking.max_elytra_stack_size", 1L),
+                maxArmorPieceStackSize = toml.getLong("stacking.max_armor_piece_stack_size", 1L),
+                activeCategories = categories,
+                excludedItemIds = toml.getList<String>("stacking.excluded_item_ids")?.filterNotNull() ?: listOf(),
+                manualStackableItemIds = toml.getList<String>("stacking.manual_item_ids")?.filterNotNull() ?: listOf()
+            )
+
+            val config = StackableToolsConfig(logging, stacking, true)
+            cachedConfig = config
+            config
+        } catch (e: Exception) {
+            CustomLogger.error("Erreur chargement config: ${e.message}")
+            StackableToolsConfig(isLoaded = true)
+        }
     }
 
     /**
-     * Sauvegarde la configuration dans le fichier TOML
+     * Sauvegarde la configuration
      */
     fun saveConfig(config: StackableToolsConfig) {
         val configFile = File(CONFIG_FILE_PATH)
@@ -37,140 +79,90 @@ object ConfigManager {
 
         try {
             configFile.parentFile?.mkdirs()
-            writer.write(config, configFile)
-        } catch (e: Exception) {
-            CustomLogger.error("Erreur lors de la sauvegarde de la configuration: ${e.message}")
-        }
-    }
-
-    /**
-     * Met à jour une valeur spécifique dans la configuration
-     */
-    fun updateConfig(key: String, value: Any) {
-        val currentConfig = config ?: loadConfig()
-        val updatedConfig = updateConfigValue(currentConfig, key, value)
-        saveConfig(updatedConfig)
-        config = updatedConfig
-    }
-
-    /**
-     * Récupère la configuration actuelle
-     */
-    fun getConfig(): StackableToolsConfig {
-        if (config == null) {
-            config = loadConfig()
-        }
-        return config!!
-    }
-
-    private fun loadConfigFromFile(configFile: File): StackableToolsConfig {
-        try {
-            val toml = Toml().read(configFile)
-
-            val manualItemIds = toml.getList<String>("stacking.manual_item_ids")
-                ?.mapNotNull { it?.trim()?.takeIf { it.isNotEmpty() } }
-                ?: listOf()
-
-            val activeCategories = toml.getList<String>("stacking.active_categories")
-                ?.mapNotNull { it?.trim()?.lowercase()?.takeIf { it.isNotEmpty() } }
-                ?: listOf("tools", "potions")
-
-            val excludedItemIds = toml.getList<String>("stacking.excluded_item_ids")
-                ?.mapNotNull { it?.trim()?.takeIf { it.isNotEmpty() } }
-                ?: listOf()
-
-            val loadedConfig = StackableToolsConfig(
-                enableLogging = toml.getBoolean("logging.enable", true),
-                logLevel = toml.getString("logging.level", "INFO"),
-                logInFile = toml.getBoolean("logging.in_file", true),
-                logInConsole = toml.getBoolean("logging.in_console", true),
-                enableStacking = toml.getBoolean("stacking.enable", true),
-                maxStackSize = toml.getLong("stacking.max_stack_size", 64L),
-                maxToolStackSize = toml.getLong("stacking.max_tool_stack_size", 8L),
-                maxPotionStackSize = toml.getLong("stacking.max_potion_stack_size", 16L),
-                activeCategories = activeCategories,
-                excludedItemIds = excludedItemIds,
-                manualStackableItemIds = manualItemIds
+            
+            val data = mapOf(
+                "logging" to mapOf(
+                    "enable" to config.logging.enable,
+                    "level" to config.logging.level,
+                    "in_file" to config.logging.inFile,
+                    "in_console" to config.logging.inConsole
+                ),
+                "stacking" to mapOf(
+                    "enable" to config.stacking.enable,
+                    "max_stack_size" to config.stacking.maxStackSize,
+                    "max_tool_stack_size" to config.stacking.maxToolStackSize,
+                    "max_potion_stack_size" to config.stacking.maxPotionStackSize,
+                    "max_enchanted_books_stack_size" to config.stacking.maxEnchantedBooksStackSize,
+                    "max_weapons_stack_size" to config.stacking.maxWeaponsStackSize,
+                    "max_elytra_stack_size" to config.stacking.maxElytraStackSize,
+                    "max_armor_piece_stack_size" to config.stacking.maxArmorPieceStackSize,
+                    "active_categories" to config.stacking.activeCategories.map { it.key },
+                    "excluded_item_ids" to config.stacking.excludedItemIds,
+                    "manual_item_ids" to config.stacking.manualStackableItemIds
+                )
             )
-            loadedConfig.isLoaded = true
-            config = loadedConfig
-            return loadedConfig
+            
+            writer.write(data, configFile)
+            cachedConfig = config
         } catch (e: Exception) {
-            CustomLogger.error("Erreur lors du chargement de la configuration: ${e.message}")
-            val defaultConfig = StackableToolsConfig()
-            config = defaultConfig
-            return defaultConfig
+            CustomLogger.error("Erreur sauvegarde config: ${e.message}")
         }
     }
 
-    private const val DEFAULT_CONFIG_RESOURCE = "/stackabletools.default.toml"
+    /**
+     * Met à jour une valeur de configuration via un chemin (ex: "stacking.enable")
+     */
+    fun updateValue(path: String, value: Any) {
+        val current = getConfig()
+        val updated = when (path) {
+            "logging.enable" -> current.copy(logging = current.logging.copy(enable = value as Boolean))
+            "logging.level" -> current.copy(logging = current.logging.copy(level = value as String))
+            "logging.in_file" -> current.copy(logging = current.logging.copy(inFile = value as Boolean))
+            "logging.in_console" -> current.copy(logging = current.logging.copy(inConsole = value as Boolean))
+            
+            "stacking.enable" -> current.copy(stacking = current.stacking.copy(enable = value as Boolean))
+            "stacking.max_stack_size" -> current.copy(stacking = current.stacking.copy(maxStackSize = value as Long))
+            "stacking.max_tool_stack_size" -> current.copy(stacking = current.stacking.copy(maxToolStackSize = value as Long))
+            "stacking.max_potion_stack_size" -> current.copy(stacking = current.stacking.copy(maxPotionStackSize = value as Long))
+            "stacking.max_enchanted_books_stack_size" -> current.copy(stacking = current.stacking.copy(maxEnchantedBooksStackSize = value as Long))
+            "stacking.max_weapons_stack_size" -> current.copy(stacking = current.stacking.copy(maxWeaponsStackSize = value as Long))
+            "stacking.max_elytra_stack_size" -> current.copy(stacking = current.stacking.copy(maxElytraStackSize = value as Long))
+            "stacking.max_armor_piece_stack_size" -> current.copy(stacking = current.stacking.copy(maxArmorPieceStackSize = value as Long))
+            
+            "stacking.active_categories" -> {
+                val list = (value as? List<*>)?.mapNotNull { it?.toString()?.let { s -> StackingCategory.fromString(s) } } ?: current.stacking.activeCategories
+                current.copy(stacking = current.stacking.copy(activeCategories = list))
+            }
+            "stacking.excluded_item_ids" -> {
+                val list = (value as? List<*>)?.mapNotNull { it?.toString() } ?: current.stacking.excludedItemIds
+                current.copy(stacking = current.stacking.copy(excludedItemIds = list))
+            }
+            "stacking.manual_item_ids" -> {
+                val list = (value as? List<*>)?.mapNotNull { it?.toString() } ?: current.stacking.manualStackableItemIds
+                current.copy(stacking = current.stacking.copy(manualStackableItemIds = list))
+            }
+            else -> current
+        }
+        
+        if (updated != current) {
+            saveConfig(updated)
+        }
+    }
 
     private fun createDefaultConfig(configFile: File) {
         try {
             configFile.parentFile?.mkdirs()
-            val defaultToml = loadDefaultConfigFromResources() ?: buildDefaultConfigString()
-            configFile.writeText(defaultToml, StandardCharsets.UTF_8)
-            CustomLogger.info("Fichier de configuration par défaut créé: $CONFIG_FILE_PATH")
+            
+            // On utilise la structure de l'objet par défaut pour garantir la cohérence
+            val defaultConfig = StackableToolsConfig.getDefault()
+            saveConfig(defaultConfig)
+            
+            CustomLogger.info("Config par défaut générée à partir des valeurs internes.")
         } catch (e: Exception) {
-            CustomLogger.error("Erreur lors de la création du fichier de configuration par défaut: ${e.message}")
+            CustomLogger.error("Erreur création config: ${e.message}")
         }
     }
 
-    private fun loadDefaultConfigFromResources(): String? {
-        return try {
-            ConfigManager::class.java.getResourceAsStream(DEFAULT_CONFIG_RESOURCE)?.bufferedReader(StandardCharsets.UTF_8)?.use { it.readText() }
-        } catch (e: Exception) {
-            CustomLogger.error("Impossible de charger la config par défaut depuis les ressources: ${e.message}")
-            null
-        }
-    }
-
-    private fun buildDefaultConfigString(): String {
-        return buildString {
-            appendLine("# Configuration pour StackableTools")
-            appendLine("#  - enable : activer/désactiver le mod")
-            appendLine("#  - max_stack_size : limite globale (64 par défaut, utile pour override full stack)")
-            appendLine("#  - max_tool_stack_size : taille maximale pour les outils")
-            appendLine("#  - max_potion_stack_size : taille maximale pour les potions")
-            appendLine("#  - active_categories : outils, potions, armors, all")
-            appendLine("#  - manual_item_ids : ids précis (minecraft:diamond_hoe, etc.)")
-            appendLine("#  - excluded_item_ids : pour forcer l'exclusion")
-            appendLine()
-            appendLine("[logging]")
-            appendLine("enable = true")
-            appendLine("level = \"INFO\"")
-            appendLine("in_file = true")
-            appendLine("in_console = true")
-            appendLine()
-            appendLine("[stacking]")
-            appendLine("enable = true")
-            appendLine("max_stack_size = 64")
-            appendLine("max_tool_stack_size = 8")
-            appendLine("max_potion_stack_size = 16")
-            appendLine("active_categories = [\"tools\", \"potions\"]")
-            appendLine("manual_item_ids = []")
-            appendLine("excluded_item_ids = []")
-            appendLine()
-            appendLine("# Exemples :")
-            appendLine("# manual_item_ids = [\"minecraft:shield\", \"minecraft:elytra\"]")
-            appendLine("# excluded_item_ids = [\"minecraft:stone_axe\"]")
-        }
-    }
-
-    private fun updateConfigValue(config: StackableToolsConfig, key: String, value: Any): StackableToolsConfig {
-        return when (key) {
-            "logging.enable" -> config.copy(enableLogging = value as Boolean)
-            "logging.level" -> config.copy(logLevel = value as String)
-            "logging.in_file" -> config.copy(logInFile = value as Boolean)
-            "logging.in_console" -> config.copy(logInConsole = value as Boolean)
-            "stacking.enable" -> config.copy(enableStacking = value as Boolean)
-            "stacking.max_stack_size" -> config.copy(maxStackSize = value as Long)
-            "stacking.max_tool_stack_size" -> config.copy(maxToolStackSize = value as Long)
-            "stacking.max_potion_stack_size" -> config.copy(maxPotionStackSize = value as Long)
-            "stacking.active_categories" -> config.copy(activeCategories = (value as? List<*>)?.mapNotNull { it?.toString()?.trim()?.lowercase() } ?: listOf())
-            "stacking.excluded_item_ids" -> config.copy(excludedItemIds = (value as? List<*>)?.mapNotNull { it?.toString()?.trim()?.takeIf { it.isNotEmpty() } } ?: listOf())
-            "stacking.manual_item_ids" -> config.copy(manualStackableItemIds = (value as? List<*>)?.mapNotNull { it?.toString()?.trim()?.takeIf { it.isNotEmpty() } } ?: listOf())
-            else -> config
-        }
-    }
+    // Cette méthode n'est plus utile car on utilise saveConfig() avec l'objet par défaut
+    private fun buildDefaultConfigString(): String = ""
 }
