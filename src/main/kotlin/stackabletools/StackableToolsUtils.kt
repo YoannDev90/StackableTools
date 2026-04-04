@@ -33,7 +33,8 @@ object StackableToolsUtils {
         // Pour les autres items, on vérifie la durabilité exacte
         if (a.damage != b.damage) return false
         
-        // On vérifie le NBT
+        // REGLE CRUCIALE : On vérifie que les enchantements (NBT) sont STRICTEMENT identiques
+        // ItemStack.canCombine vérifie déjà l'égalité du NBT (enchantements, noms custom, etc.)
         if (!ItemStack.canCombine(a, b)) return false
         
         return true
