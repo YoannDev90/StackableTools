@@ -9,10 +9,14 @@ import net.minecraft.item.SwordItem
 import net.minecraft.item.ToolItem
 import net.minecraft.item.TridentItem
 import net.minecraft.registry.Registries
+import java.util.concurrent.ConcurrentHashMap
 import stackabletools.config.ConfigManager
 import stackabletools.config.StackingCategory
 
 object StackableToolsUtils {
+
+    private val stackableCache = ConcurrentHashMap<String, Boolean>()
+    private var lastConfigHash = 0
 
     /**
      * Vérifie si deux stacks peuvent être fusionnés (même item, même durabilité, même NBT)
@@ -36,7 +40,8 @@ object StackableToolsUtils {
     }
 
     /**
-     * Retourne true si l'item est éligible à l'empilement selon la config
+     * Retourne true si l'item est éligible à l'empilement selon la config.
+     * Utilise un cache pour optimiser les performances.
      */
     fun isStackableItem(stack: ItemStack): Boolean {
         if (stack.isEmpty) return false
@@ -44,7 +49,20 @@ object StackableToolsUtils {
         val config = ConfigManager.getConfig()
         if (!config.stacking.enable) return false
 
+        // Invalidation du cache si la config change (hash sommaire)
+        val configHash = config.stacking.hashCode()
+        if (configHash != lastConfigHash) {
+            stackableCache.clear()
+            lastConfigHash = configHash
+        }
+
         val itemId = Registries.ITEM.getId(stack.item).toString()
+        return stackableCache.getOrPut(itemId) {
+            computeIsStackable(stack, config, itemId)
+        }
+    }
+
+    private fun computeIsStackable(stack: ItemStack, config: stackabletools.config.StackableToolsConfig, itemId: String): Boolean {
         val shortItemId = itemId.substringAfter(':')
 
         val excluded = config.stacking.excludedItemIds

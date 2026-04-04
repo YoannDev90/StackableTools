@@ -15,11 +15,11 @@ import stackabletools.StackableToolsUtils
 abstract class ItemStackMixin {
 
     @Unique
-    private var isProcessingDamageInternal = false
+    private val isProcessingDamageInternal = ThreadLocal.withInitial { false }
 
     @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"], at = [At("HEAD")])
     private fun onDamage(amount: Int, entity: LivingEntity, breakCallback: java.util.function.Consumer<LivingEntity>, ci: CallbackInfo) {
-        if (isProcessingDamageInternal) return
+        if (isProcessingDamageInternal.get()) return
         
         val stack = this as Any as ItemStack
         
@@ -30,7 +30,7 @@ abstract class ItemStackMixin {
             // On ne sépare que si l'outil est encore NEUF (pour éviter les boucles si déjà abîmé)
             // IMPORTANCE : On vérifie stack.damage == 0 AVANT que Minecraft n'applique quoi que ce soit
             if (stack.damage == 0 && amount > 0) { // On s'assure que c'est bien des DÉGÂTS (amount > 0)
-                isProcessingDamageInternal = true
+                isProcessingDamageInternal.set(true)
                 try {
                     val countBefore = stack.count
                     
@@ -45,21 +45,11 @@ abstract class ItemStackMixin {
                     CustomLogger.info("Séparation forcée : 1 outil utilisé, ${leftover.count} outils neufs protégés.")
 
                     // 3. On rend les outils neufs au joueur. 
-                    var emptySlot = -1
-                    for (i in 0 until 36) {
-                        if (player.inventory.getStack(i).isEmpty) {
-                            emptySlot = i
-                            break
-                        }
-                    }
-
-                    if (emptySlot != -1) {
-                        player.inventory.setStack(emptySlot, leftover)
-                    } else {
+                    if (!player.inventory.insertStack(leftover)) {
                         player.dropItem(leftover, false)
                     }
                 } finally {
-                    isProcessingDamageInternal = false
+                    isProcessingDamageInternal.set(false)
                 }
             }
         }
