@@ -7,14 +7,15 @@ import java.nio.charset.StandardCharsets
 import stackabletools.CustomLogger
 
 /**
- * Gestionnaire de configuration TOML refactorisé
+ * Refactored TOML configuration manager.
  */
 object ConfigManager {
     private const val CONFIG_FILE_PATH = "config/stackabletools.toml"
     private var cachedConfig: StackableToolsConfig? = null
 
     /**
-     * Récupère la configuration actuelle (charge si nécessaire)
+     * Retrieves the current configuration (loads if necessary).
+     * @return The current configuration.
      */
     fun getConfig(): StackableToolsConfig {
         if (cachedConfig == null) {
@@ -24,7 +25,8 @@ object ConfigManager {
     }
 
     /**
-     * Charge la configuration depuis le fichier (ou crée par défaut)
+     * Loads the configuration from the file (or creates it by default).
+     * @return The loaded configuration.
      */
     fun loadConfig(): StackableToolsConfig {
         val configFile = File(CONFIG_FILE_PATH)
@@ -75,7 +77,8 @@ object ConfigManager {
     }
 
     /**
-     * Sauvegarde la configuration
+     * Saves the configuration to the TOML file.
+     * @param config The configuration to save.
      */
     fun saveConfig(config: StackableToolsConfig) {
         val configFile = File(CONFIG_FILE_PATH)
@@ -114,7 +117,9 @@ object ConfigManager {
     }
 
     /**
-     * Met à jour une valeur de configuration via un chemin (ex: "stacking.enable")
+     * Updates a configuration value by path (e.g., "stacking.enable").
+     * @param path The path to the configuration key.
+     * @param value The new value to set.
      */
     fun updateValue(path: String, value: Any) {
         val current = getConfig()
@@ -153,20 +158,24 @@ object ConfigManager {
         }
     }
 
+    /**
+     * Creates a default configuration file based on internal default values.
+     * @param configFile The target file where the default configuration will be saved.
+     */
     private fun createDefaultConfig(configFile: File) {
         try {
             configFile.parentFile?.mkdirs()
             
-            // On utilise la structure de l'objet par défaut pour garantir la cohérence
+            // Use default object structure to guarantee consistency
             val defaultConfig = StackableToolsConfig.getDefault()
             saveConfig(defaultConfig)
             
-            CustomLogger.info("Config par défaut générée à partir des valeurs internes.")
+            CustomLogger.info("Default config generated from internal values.")
         } catch (e: Exception) {
-            CustomLogger.error("Erreur création config: ${e.message}")
+            CustomLogger.error("Error creating default config: ${e.message}")
         }
     }
 
-    // Cette méthode n'est plus utile car on utilise saveConfig() avec l'objet par défaut
+    // This method is no longer useful as we use saveConfig() with the default object
     private fun buildDefaultConfigString(): String = ""
 }

@@ -19,30 +19,35 @@ object StackableToolsUtils {
     private var lastConfigHash = 0
 
     /**
-     * Vérifie si deux stacks peuvent être fusionnés (même item, même durabilité, même NBT)
+     * Checks if two item stacks can be merged (same item, same durability, same NBT).
+     * @param a First item stack.
+     * @param b Second item stack.
+     * @return True if the stacks can be merged.
      */
     fun canStackItems(a: ItemStack, b: ItemStack): Boolean {
         if (a.isEmpty || b.isEmpty) return false
         if (a.item !== b.item) return false
         
-        // REGLE : On ne stacke que les objets NEUFS (damage == 0).
+        // RULE: We only stack FRESH items (damage == 0).
         if (a.item is ToolItem || a.item is ArmorItem || a.item is SwordItem || a.item is TridentItem || a.item is ElytraItem) {
             if (a.damage > 0 || b.damage > 0) return false
         }
 
-        // Pour les autres items, on vérifie la durabilité exacte
+        // For other items, check exact durability
         if (a.damage != b.damage) return false
         
-        // REGLE CRUCIALE : On vérifie que les enchantements (NBT) sont STRICTEMENT identiques
-        // ItemStack.canCombine vérifie déjà l'égalité du NBT (enchantements, noms custom, etc.)
+        // CRUCIAL RULE: Check that enchantments (NBT) are STRICTLY identical
+        // ItemStack.canCombine already checks for NBT equality (enchantments, custom names, etc.)
         if (!ItemStack.canCombine(a, b)) return false
         
         return true
     }
 
     /**
-     * Retourne true si l'item est éligible à l'empilement selon la config.
-     * Utilise un cache pour optimiser les performances.
+     * Returns true if the item is eligible for stacking according to the configuration.
+     * Uses a cache to optimize performance.
+     * @param stack The item stack to check.
+     * @return True if the item can be stacked.
      */
     fun isStackableItem(stack: ItemStack): Boolean {
         if (stack.isEmpty) return false
@@ -50,7 +55,7 @@ object StackableToolsUtils {
         val config = ConfigManager.getConfig()
         if (!config.stacking.enable) return false
 
-        // Invalidation du cache si la config change (hash sommaire)
+        // Cache invalidation if config changes (simple hash check)
         val configHash = config.stacking.hashCode()
         if (configHash != lastConfigHash) {
             stackableCache.clear()
@@ -63,6 +68,9 @@ object StackableToolsUtils {
         }
     }
 
+    /**
+     * Internal logic to compute if an item is stackable.
+     */
     private fun computeIsStackable(stack: ItemStack, config: stackabletools.config.StackableToolsConfig, itemId: String): Boolean {
         val shortItemId = itemId.substringAfter(':')
 

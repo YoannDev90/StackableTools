@@ -19,6 +19,10 @@ import stackabletools.CustomLogger
 import stackabletools.StackableToolsUtils
 import stackabletools.config.ConfigManager
 
+/**
+ * Mixin for the player's inventory to handle the insertion of items that can be stacked.
+ * Overrides the base logic to allow merging stacks of items that normally don't stack (tools, potions, etc.).
+ */
 @Mixin(PlayerInventory::class)
 abstract class InventoryMixin {
 
@@ -28,19 +32,26 @@ abstract class InventoryMixin {
     @Shadow
     abstract fun setStack(slot: Int, stack: ItemStack)
 
+    /**
+     * Injects at the beginning of insertStack to handle custom stacking logic.
+     * If the item is stackable according to our mod, we manually process its insertion to respect custom stack sizes.
+     */
     @Inject(method = ["insertStack(Lnet/minecraft/item/ItemStack;)Z"], at = [At("HEAD")], cancellable = true)
     private fun onInsertStack(stack: ItemStack, cir: CallbackInfoReturnable<Boolean>) {
         val inv = this as Any as PlayerInventory
+        // We only work on the server side and for non-empty stacks
         if (stack.isEmpty || inv.player.getWorld().isClient) return
         
+        // Check if the item is eligible for stacking
         if (!StackableToolsUtils.isStackableItem(stack)) return
 
-        // REGLE : On ne stacke pas les objets usés
+        // RULE: We do not stack damaged items to avoid loss of durability data or complex merges
         if (stack.isDamaged && (stack.item is ToolItem || stack.item is ArmorItem || stack.item is SwordItem || stack.item is TridentItem || stack.item is ElytraItem)) {
             return
         }
 
         val cfg = ConfigManager.getConfig().stacking
+        // Determine the max stack size based on item category
         val maxStackSize = when (stack.item) {
             is SwordItem, is TridentItem -> cfg.maxWeaponsStackSize
             is ToolItem -> cfg.maxToolStackSize
@@ -54,12 +65,13 @@ abstract class InventoryMixin {
         var remaining = stack.count
         val originalCount = stack.count
 
-        // Fusion
+        // Step 1: Attempt to merge with existing stacks
         for (slot in 0 until 36) { 
             if (remaining <= 0) break
             val existing = getStack(slot)
             if (existing.isEmpty) continue
             
+            // Check if items are compatible (NBT, Enchantments, etc.)
             if (StackableToolsUtils.canStackItems(existing, stack)) {
                 val freeSpace = (maxStackSize - existing.count).coerceAtLeast(0)
                 if (freeSpace > 0) {
@@ -70,7 +82,7 @@ abstract class InventoryMixin {
             }
         }
 
-        // Placement vide
+        // Step 2: Fill empty slots if there is still remaining item count
         if (remaining > 0) {
             for (slot in 0 until 36) {
                 if (remaining <= 0) break

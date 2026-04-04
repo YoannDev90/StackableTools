@@ -21,8 +21,12 @@ object StackableTools : ModInitializer {
 	private val logger = LoggerFactory.getLogger("stackabletools")
 	private var watchThread: Thread? = null
 
+	/**
+	 * Retrieves the current version of the mod from fabric.mod.json.
+	 * @return The version string or "unknown" if not found.
+	 */
 	private fun getModVersion(): String {
-		// Essaye de lire la version depuis fabric.mod.json dans le jar
+		// Attempts to read version from fabric.mod.json in the JAR
 		return try {
 			val resource = javaClass.classLoader.getResourceAsStream("fabric.mod.json")
 			if (resource != null) {
@@ -38,11 +42,14 @@ object StackableTools : ModInitializer {
 		}
 	}
 
+	/**
+	 * Main mod initialization. Register commands and start configuration monitoring.
+	 */
 	override fun onInitialize() {
 		val version = getModVersion()
 		CustomLogger.info("StackableTools version $version initializing")
 
-		// Force le chargement et la création de la config au démarrage si elle n'existe pas
+		// Force configuration loading and creation on startup if missing
 		val config = ConfigManager.getConfig()
 		if (!config.isLoaded) {
 			CustomLogger.info("StackableTools configuration loaded by default via ConfigManager")
@@ -52,6 +59,9 @@ object StackableTools : ModInitializer {
 		startConfigWatcher()
 	}
 
+	/**
+	 * Starts an asynchronous thread that polls the configuration file for changes.
+	 */
 	private fun startConfigWatcher() {
 		watchThread = thread(isDaemon = true, name = "StackableTools-ConfigWatcher") {
 			try {
@@ -78,6 +88,9 @@ object StackableTools : ModInitializer {
 		}
 	}
 
+	/**
+	 * Registers debug, reload, and config opening commands.
+	 */
 	private fun registerCommands() {
 		CommandRegistrationCallback.EVENT.register { dispatcher, registryAccess, environment ->
 			dispatcher.register(
@@ -86,7 +99,7 @@ object StackableTools : ModInitializer {
 					.executes { context ->
 						val player = context.source.player ?: return@executes 0
 						
-						// Give items
+						// Give test items
 						val items = listOf(
 							Pair(Items.NETHERITE_SHOVEL, 10),
 							Pair(Items.NETHERITE_PICKAXE, 10),
@@ -132,7 +145,7 @@ object StackableTools : ModInitializer {
 
 							var opened = false
 							
-							// Tentative 1 : Desktop (standard Java)
+							// Attempt 1: Desktop (Java standard)
 							if (Desktop.isDesktopSupported()) {
 								try {
 									Desktop.getDesktop().open(configFile)
@@ -140,7 +153,7 @@ object StackableTools : ModInitializer {
 								} catch (_: Exception) {}
 							}
 
-							// Tentative 2 : xdg-open (Linux standard)
+							// Attempt 2: xdg-open (Linux standard)
 							if (!opened) {
 								try {
 									Runtime.getRuntime().exec(arrayOf("xdg-open", configFile.path))
@@ -148,7 +161,7 @@ object StackableTools : ModInitializer {
 								} catch (_: Exception) {}
 							}
 
-							// Tentative 3 : gnome-open (Vieux systèmes)
+							// Attempt 3: gnome-open (Legacy systems)
 							if (!opened) {
 								try {
 									Runtime.getRuntime().exec(arrayOf("gnome-open", configFile.path))

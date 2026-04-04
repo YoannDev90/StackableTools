@@ -11,40 +11,54 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import stackabletools.CustomLogger
 import stackabletools.StackableToolsUtils
 
+/**
+ * Mixin aimed at protecting tool groups from simultaneous durability loss.
+ * When a tool that is stacked (count > 1) is used, we isolate a single unit
+ * so that only one tool takes damage while the rest of the stack remains untouched and intact.
+ */
 @Mixin(ItemStack::class, priority = 900)
 abstract class ItemStackMixin {
 
+    /**
+     * Re-entry guard to prevent infinite recursion during stack separation.
+     * Uses ThreadLocal for thread safety in multi-threaded Minecraft environments.
+     */
     @Unique
     private val isProcessingDamageInternal = ThreadLocal.withInitial { false }
 
+    /**
+     * Injected into the damage function of ItemStack.
+     * Intercepts damage events before they are applied.
+     */
     @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"], at = [At("HEAD")])
     private fun onDamage(amount: Int, entity: LivingEntity, breakCallback: java.util.function.Consumer<LivingEntity>, ci: CallbackInfo) {
+        // Prevent recursive triggers if we modify the stack within this function
         if (isProcessingDamageInternal.get()) return
         
         val stack = this as Any as ItemStack
         
-        // Si c'est un joueur et que l'objet est stacké (plus de 1) et que c'est un outil configurable
+        // Only process for players on the server where tools are stacked
         if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsUtils.isStackableItem(stack)) {
             val player = entity
             
-            // On ne sépare que si l'outil est encore NEUF (pour éviter les boucles si déjà abîmé)
-            // IMPORTANCE : On vérifie stack.damage == 0 AVANT que Minecraft n'applique quoi que ce soit
-            if (stack.damage == 0 && amount > 0) { // On s'assure que c'est bien des DÉGÂTS (amount > 0)
+            // Separation logic: isolate the used unit so durability isn't shared by the whole stack
+            // We only trigger this for new tools (damage == 0) to ensure predictable behavior
+            if (stack.damage == 0 && amount > 0) { 
                 isProcessingDamageInternal.set(true)
                 try {
                     val countBefore = stack.count
                     
-                    // 1. On diminue le stack AVANT de copier pour isoler l'item utilisé
+                    // 1. Reduce the current stack to 1 (representing the active tool being damaged)
                     stack.count = 1
                     
-                    // 2. On crée le reste qui est GARANTI neuf
+                    // 2. Create a new stack for the remaining healthy tools
                     val leftover = stack.copy()
                     leftover.count = countBefore - 1
                     leftover.damage = 0
                     
                     CustomLogger.info("Forced separation: 1 tool used, ${leftover.count} fresh tools protected.")
 
-                    // 3. On rend les outils neufs au joueur. 
+                    // 3. Return the healthy tools to the player's inventory or drop them if full
                     if (!player.inventory.insertStack(leftover)) {
                         player.dropItem(leftover, false)
                     }
