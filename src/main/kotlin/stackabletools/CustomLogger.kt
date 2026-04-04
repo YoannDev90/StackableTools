@@ -42,7 +42,7 @@ object CustomLogger {
 
     private fun log(level: String, message: String) {
         val config = ConfigManager.getConfig()
-        if (!config.enableLogging) return
+        if (!config.logging.enable) return
 
         // On ne log que si on est sur le thread serveur pour éviter les doublons client/serveur
         val isServerThread = Thread.currentThread().name.contains("Server thread", ignoreCase = true)
@@ -51,12 +51,12 @@ object CustomLogger {
         val formattedMessage = "[$level][$timestamp] $message"
 
         // Console (si serveur ou si autorisé)
-        if (config.logInConsole && isServerThread) {
+        if (config.logging.inConsole && isServerThread) {
             println(formattedMessage.toAscii())
         }
 
         // Fichier (uniquement via serveur pour éviter les conflits d'accès)
-        if (config.logInFile && isServerThread) {
+        if (config.logging.inFile && isServerThread) {
             writeToFile(formattedMessage)
         }
     }

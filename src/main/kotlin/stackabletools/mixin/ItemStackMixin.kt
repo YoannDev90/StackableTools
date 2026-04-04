@@ -24,7 +24,7 @@ abstract class ItemStackMixin {
         val stack = this as Any as ItemStack
         
         // Si c'est un joueur et que l'objet est stacké (plus de 1) et que c'est un outil configurable
-        if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsUtils.isToolOrManuallyRegistered(stack)) {
+        if (entity is PlayerEntity && !entity.getWorld().isClient && stack.count > 1 && StackableToolsUtils.isStackableItem(stack)) {
             val player = entity
             
             // On ne sépare que si l'outil est encore NEUF (pour éviter les boucles si déjà abîmé)
