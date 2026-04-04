@@ -9,8 +9,8 @@ import java.util.concurrent.Executors
 import stackabletools.config.ConfigManager
 
 /**
- * Logger personnalisé qui écrit les messages à la fois dans la console et dans un fichier.
- * Optimisé avec une file d'attente asynchrone et une gestion de rotation de fichiers.
+ * Custom logger that writes messages both to the console and to a file.
+ * Optimized with an asynchronous queue and file rotation management.
  */
 object CustomLogger {
     private const val LOG_FILE_PATH = "logs/stackabletools.log"
@@ -26,6 +26,9 @@ object CustomLogger {
         startLogWorker()
     }
 
+    /**
+     * Starts the asynchronous worker that processes logs from the queue and writes them to the file.
+     */
     private fun startLogWorker() {
         executor.submit {
             while (true) {
@@ -46,44 +49,60 @@ object CustomLogger {
     }
 
     /**
-     * Log un message INFO
+     * Logs an INFO message.
+     * @param message The message to log.
      */
     fun info(message: String) = log("INFO", message)
 
     /**
-     * Log un message WARNING
+     * Logs a WARNING message.
+     * @param message The message to log.
      */
     fun warn(message: String) = log("WARN", message)
 
     /**
-     * Log un message ERROR
+     * Logs an ERROR message.
+     * @param message The message to log.
      */
     fun error(message: String) = log("ERROR", message)
 
     /**
-     * Log un message DEBUG
+     * Logs a DEBUG message.
+     * @param message The message to log.
      */
     fun debug(message: String) = log("DEBUG", message)
 
+    /**
+     * Core logging logic. Filters by thread and handles output to console and file.
+     * @param level The log level (INFO, WARN, etc.).
+     * @param message The message to log.
+     */
     private fun log(level: String, message: String) {
         val config = try { ConfigManager.getConfig() } catch (e: Exception) { null }
         if (config != null && !config.logging.enable) return
 
+        // We only log if we are on the server thread to avoid client/server duplicates
         val isServerThread = Thread.currentThread().name.contains("Server thread", ignoreCase = true)
         val timestamp = LocalDateTime.now().format(formatter)
         val formattedMessage = "[$level][$timestamp] $message"
 
+        // Console (if server or if authorized)
         if (config == null || config.logging.inConsole) {
             if (isServerThread || config == null) {
                 println(formattedMessage.toAscii())
             }
         }
 
+        // File (only via server thread to avoid access conflicts)
         if (isServerThread && (config == null || config.logging.inFile)) {
             logQueue.offer(formattedMessage)
         }
     }
 
+    /**
+     * Processes writing a message to the log file and handles rotation if needed.
+     * @param message The formatted message to write.
+     */
     private fun processWriteToFile(message: String) {
         try {
             val logFile = File(LOG_FILE_PATH)
@@ -100,15 +119,21 @@ object CustomLogger {
         }
     }
 
+    /**
+     * Renames the current log file with a timestamp and starts a new one.
+     * @param logFile The current log file.
+     */
     private fun rotateLogFile(logFile: File) {
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))
         val rotatedFile = File("${LOG_FILE_PATH}.$timestamp.old")
         logFile.renameTo(rotatedFile)
     }
 
+    /**
+     * Extension to keep native Minecraft UTF-8 characters.
+     */
     private fun String.toAscii(): String {
-        // Suppression de la normalisation qui remplaçait les caractères accentués par des '?'
-        // On garde l'UTF-8 natif de Minecraft qui est supporté par la plupart des terminaux modernes.
+        // Keeping native Minecraft UTF-8 which is supported by most modern terminals.
         return this
     }
 }

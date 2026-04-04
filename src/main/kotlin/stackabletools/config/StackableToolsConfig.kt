@@ -1,13 +1,16 @@
 package stackabletools.config
 
 /**
- * Classe représentant la configuration du mod StackableTools
+ * Class representing the StackableTools mod configuration.
  */
 data class StackableToolsConfig(
     var logging: LoggingConfig = LoggingConfig(),
     var stacking: StackingConfig = StackingConfig(),
     var isLoaded: Boolean = false
 ) {
+    /**
+     * Logging specific configuration.
+     */
     data class LoggingConfig(
         var enable: Boolean = true,
         var level: String = "INFO",
@@ -15,6 +18,9 @@ data class StackableToolsConfig(
         var inConsole: Boolean = true
     )
 
+    /**
+     * Stacking specific configuration and limits.
+     */
     data class StackingConfig(
         var enable: Boolean = true,
         var maxStackSize: Long = 64L,
@@ -37,6 +43,9 @@ data class StackableToolsConfig(
     )
 
     companion object {
+        /**
+         * Returns a new instance of the configuration with default values.
+         */
         fun getDefault(): StackableToolsConfig = StackableToolsConfig()
     }
 }
