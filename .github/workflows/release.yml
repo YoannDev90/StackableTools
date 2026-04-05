@@ -1,4 +1,5 @@
 name: Multi-Release
+
 on:
     workflow_dispatch:
         inputs:
@@ -20,11 +21,45 @@ jobs:
               with:
                   ref: master
                   path: master-repo
+                  fetch-depth: 0
 
-            - name: Get version from master
-              id: get_version
+            - name: Bump version if needed
+              id: version_check
+              shell: bash
               run: |
-                  VERSION=$(grep "mod_version" master-repo/gradle.properties | cut -d'=' -f2)
+                  cd master-repo
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  # Function to increment patch version
+                  increment_version() {
+                    local v=$1
+                    local major=$(echo $v | cut -d. -f1)
+                    local minor=$(echo $v | cut -d. -f2)
+                    local patch=$(echo $v | cut -d. -f3)
+                    echo "$major.$minor.$((patch + 1))"
+                  }
+
+                  # Load version from gradle.properties
+                  VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2)
+                  git fetch --tags
+
+                  # Check if tag already exists and increment version until it's unique
+                  while git rev-parse "v$VERSION" >/dev/null 2>&1; do
+                    echo "Tag v$VERSION already exists. Counting up..."
+                    VERSION=$(increment_version $VERSION)
+                  done
+
+                  # Get current version again for comparison
+                  CURRENT_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2)
+                  if [ "$VERSION" != "$CURRENT_VERSION" ]; then
+                    echo "Updating version in gradle.properties to $VERSION"
+                    sed -i "s/mod_version=$CURRENT_VERSION/mod_version=$VERSION/" gradle.properties
+                    git add gradle.properties
+                    git commit -m "chore: bump version to $VERSION [skip ci]"
+                    git push origin master
+                  fi
+
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
 
             - name: Checkout Build branch
@@ -33,20 +68,19 @@ jobs:
                   ref: build
                   path: build-artifacts
 
-            - name: Create tag
+            - name: Push Tag
               run: |
                   cd master-repo
-                  git config user.name "github-actions"
-                  git config user.email "github-actions@github.com"
-                  git tag v${{ steps.get_version.outputs.version }}
-                  git push origin v${{ steps.get_version.outputs.version }}
+                  git tag v${{ steps.version_check.outputs.version }}
+                  git push origin v${{ steps.version_check.outputs.version }}
 
             - name: Create GitHub Release
               uses: softprops/action-gh-release@v2
               with:
-                  tag_name: v${{ steps.get_version.outputs.version }}
-                  name: Release v${{ steps.get_version.outputs.version }}
+                  tag_name: v${{ steps.version_check.outputs.version }}
+                  name: Release v${{ steps.version_check.outputs.version }}
                   body: ${{ github.event.inputs.release-body }}
+                  generate_release_notes: true
                   files: build-artifacts/*.jar
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
