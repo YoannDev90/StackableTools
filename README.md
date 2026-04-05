@@ -2,8 +2,8 @@
 
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
-[![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoann/StackableTools/blob/master/LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoann/StackableTools/releases)
+[![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/releases)
 
 ---
 
@@ -45,7 +45,7 @@
     ```
 
 ## 🚀 Installation (User)
-1.  Download the latest `.jar` from the [Releases](https://github.com/yoann/StackableTools/releases) page.
+1.  Download the latest `.jar` from the [Releases](https://github.com/yoanndev90/StackableTools/releases) page.
 2.  Install **Fabric Loader** and **Fabric API**.
 3.  Place the `.jar` in your `mods/` folder.
 4.  Launch and enjoy a cleaner inventory!
