@@ -28,16 +28,16 @@ jobs:
           path: build-artifacts
 
       - name: Publish to CurseForge + Modrinth
-        uses: tristankechlo/publish-mc-mod@v2.1.0
+        uses: tristankechlo/publish-mc-mod@v2.0.0
         with:
           mc-version: ${{ steps.mod_info.outputs.mc_version }}
           mod-version: ${{ steps.mod_info.outputs.version }}
           curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
           modrinth-id: ${{ secrets.MODRINTH_PROJECT_ID }}
           version-range: ${{ steps.mod_info.outputs.mc_version }}
-          version-type: 'release'
-          loaders: 'fabric'
-          fabric-glob: 'build-artifacts/stackabletools-${{ steps.mod_info.outputs.version }}.jar'
+          version-type: "release"
+          loaders: "fabric"
+          fabric-glob: "build-artifacts/stackabletools-${{ steps.mod_info.outputs.version }}.jar"
           changelog: "Official release of v${{ steps.mod_info.outputs.version }}"
           curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
           modrinth-token: ${{ secrets.MODRINTH_API_TOKEN }}
