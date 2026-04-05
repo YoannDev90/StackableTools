@@ -1,0 +1,52 @@
+name: Multi-Release
+on:
+    workflow_dispatch:
+        inputs:
+            release-body:
+                description: "Changelog for this release"
+                type: string
+                required: false
+                default: "Manual release from build branch."
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout repository (Master)
+              uses: actions/checkout@v4
+              with:
+                  ref: master
+                  path: master-repo
+
+            - name: Get version from master
+              id: get_version
+              run: |
+                  VERSION=$(grep "mod_version" master-repo/gradle.properties | cut -d'=' -f2)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+            - name: Checkout Build branch
+              uses: actions/checkout@v4
+              with:
+                  ref: build
+                  path: build-artifacts
+
+            - name: Create tag
+              run: |
+                  cd master-repo
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+                  git tag v${{ steps.get_version.outputs.version }}
+                  git push origin v${{ steps.get_version.outputs.version }}
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: v${{ steps.get_version.outputs.version }}
+                  name: Release v${{ steps.get_version.outputs.version }}
+                  body: ${{ github.event.inputs.release-body }}
+                  files: build-artifacts/*.jar
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
