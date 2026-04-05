@@ -1,0 +1,51 @@
+name: Build
+on:
+    push:
+        branches:
+            - master
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup JDK
+              uses: actions/setup-java@v4
+              with:
+                  java-version: "21"
+                  distribution: "temurin"
+                  cache: "gradle"
+
+            - name: Make gradle wrapper executable
+              run: chmod +x ./gradlew
+
+            - name: Build
+              run: ./gradlew build
+
+            - name: Get Version
+              id: get_version
+              run: |
+                  VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+            - name: Prepare build branch
+              run: |
+                  mkdir -p deploy
+                  cp build/libs/*.jar deploy/
+                  cd deploy
+                  git init
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+                  git checkout -b build
+                  git add .
+                  git commit -m "Build v${{ steps.get_version.outputs.version }} - $(date +'%Y-%m-%d %H:%M:%S')"
+                  git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+                  git push -f origin build
