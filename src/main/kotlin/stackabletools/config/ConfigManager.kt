@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets
 import stackabletools.CustomLogger
 
 /**
- * Refactored TOML configuration manager.
+ * TOML configuration manager.
  */
 object ConfigManager {
     private const val CONFIG_FILE_PATH = "config/stackabletools.toml"
@@ -175,7 +175,4 @@ object ConfigManager {
             CustomLogger.error("Error creating default config: ${e.message}")
         }
     }
-
-    // This method is no longer useful as we use saveConfig() with the default object
-    private fun buildDefaultConfigString(): String = ""
 }

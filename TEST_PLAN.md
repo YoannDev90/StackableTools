@@ -29,3 +29,10 @@
 - [ ] Inventaire plein : Utiliser un stack de 8 outils alors que tout l'inventaire est plein. Le surplus (les 7 neufs) doit tomber au sol au lieu de disparaître.
 - [ ] Armor Stacking : Vérifier que les bottes/casques neufs se stackent aussi (si activé) mais se séparent dès qu'on prend des dégâts.
 - [ ] Craft : Vérifier que crafter plusieurs outils à la suite (si possible via mod/recette) les stacke correctement.
+
+## CATEGORIE 6 : COMPATIBILITÉ AVEC D'AUTRES MODS
+- [ ] Mod d'inventaire (tri auto) - Inventory Profiles Next : Vérifier qu'un tri automatique ne casse pas les stacks d'outils et ne duplique rien.
+- [ ] Mod de recharge de slot - Stack Refill : Utiliser un stack d'outils jusqu'a séparation, puis vérifier que le refill automatique n'empile pas des outils abîmés avec des neufs.
+- [ ] Mod de coffre/stockage - Tom's Simple Storage Mod : Déplacer des stacks d'outils via une UI de stockage moddée. Les quantités doivent rester exactes.
+- [ ] Mod d'enchantement/réparation - Anvil Fix Reborn : Enchanter ou réparer un outil issu d'un stack. Il doit se séparer correctement avant modification.
+- [ ] Mod de loot (ramassage auto) - Easy Magic : Ramasser des outils via un système moddé, puis vérifier que le stacking suit les mêmes règles qu'en vanilla.
