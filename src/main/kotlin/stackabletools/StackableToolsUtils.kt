@@ -12,11 +12,60 @@ import net.minecraft.registry.Registries
 import java.util.concurrent.ConcurrentHashMap
 import stackabletools.config.ConfigManager
 import stackabletools.config.StackingCategory
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.item.Items
 
 object StackableToolsUtils {
 
     private val stackableCache = ConcurrentHashMap<String, Boolean>()
     private var lastConfigHash = 0
+
+    /**
+     * Compares two ItemStack NBT tags, ignoring cosmetic differences like custom names.
+     * Enchantments are compared as sets (order-insensitive).
+     */
+    private fun areNBTsEquivalent(nbt1: NbtCompound?, nbt2: NbtCompound?): Boolean {
+        // Both null = equivalent
+        if (nbt1 == null && nbt2 == null) return true
+        // One null, one not = not equivalent
+        if (nbt1 == null || nbt2 == null) return false
+        
+        // Extract enchantment lists
+        val enc1 = nbt1.getList("Enchantments", 10) // 10 = NbtElement.COMPOUND_TYPE
+        val enc2 = nbt2.getList("Enchantments", 10)
+        
+        // Compare enchantments as sets (order-insensitive)
+        if (enc1.size != enc2.size) return false
+        
+        val enc1Set = mutableSetOf<String>()
+        for (i in 0 until enc1.size) {
+            enc1Set.add(enc1.getCompound(i).toString())
+        }
+        
+        val enc2Set = mutableSetOf<String>()
+        for (i in 0 until enc2.size) {
+            enc2Set.add(enc2.getCompound(i).toString())
+        }
+        
+        if (enc1Set != enc2Set) return false
+        
+        // Check that there are no other conflicting NBT tags (ignore display/cosmetic ones)
+        val cosmetics = setOf("display", "HideFlags", "CustomModelData", "Damage")
+        
+        val relevantKeys1 = nbt1.keys.filter { it !in cosmetics }
+        val relevantKeys2 = nbt2.keys.filter { it !in cosmetics }
+        
+        if (relevantKeys1.toSet() != relevantKeys2.toSet()) return false
+        
+        // Compare non-cosmetic keys
+        for (key in relevantKeys1) {
+            val v1 = nbt1.get(key)?.toString()
+            val v2 = nbt2.get(key)?.toString()
+            if (v1 != v2) return false
+        }
+        
+        return true
+    }
 
     /**
      * Checks if two item stacks can be merged (same item, same durability, same NBT).
@@ -36,9 +85,9 @@ object StackableToolsUtils {
         // For other items, check exact durability
         if (a.damage != b.damage) return false
         
-        // CRUCIAL RULE: Check that enchantments (NBT) are STRICTLY identical
-        // ItemStack.canCombine already checks for NBT equality (enchantments, custom names, etc.)
-        if (!ItemStack.canCombine(a, b)) return false
+        // Compare NBT tags: enchantments must match (order-insensitive), 
+        // but ignore cosmetic differences like custom names
+        if (!areNBTsEquivalent(a.nbt, b.nbt)) return false
         
         return true
     }

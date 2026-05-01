@@ -3,7 +3,7 @@
 .kotlin/
 .env
 compile_config.json
-clear_workflows.py
+scripts/*.py
 
 # gradle
 
