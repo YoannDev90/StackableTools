@@ -1,51 +1,37 @@
 {
-	"schemaVersion": 1,
-	"id": "stackabletools",
-	"version": "${version}",
-	"name": "StackableTools",
-	"description": "Un mod pour rendre les outils et autres objets empilables dans Minecraft.",
-	"authors": [
-		"Yoann"
-	],
-	"contact": {
-		"homepage": "https://github.com/YoannDev90/StackableTools",
-		"sources": "https://github.com/YoannDev90/StackableTools"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/stackabletools/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			{
-				"value": "stackabletools.StackableTools",
-				"adapter": "kotlin"
-			}
-		],
-		"client": [
-			{
-				"value": "stackabletools.StackableToolsClient",
-				"adapter": "kotlin"
-			}
-		],
-		"fabric-datagen": [
-			{
-				"value": "stackabletools.StackableToolsDataGenerator",
-				"adapter": "kotlin"
-			}
-		]
-	},
-	"mixins": [
-		"stackabletools.mixins.json",
-		{
-			"config": "stackabletools.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.18.5",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
-		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
-	}
+  "schemaVersion": 1,
+  "id": "stackabletools",
+  "version": "${version}",
+  "name": "StackableTools",
+  "description": "Un mod pour rendre les outils et autres objets empilables dans Minecraft.",
+  "authors": ["Yoann"],
+  "contact": {
+    "homepage": "https://github.com/YoannDev90/StackableTools",
+    "sources": "https://github.com/YoannDev90/StackableTools"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/stackabletools/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "stackabletools.StackableTools",
+        "adapter": "kotlin"
+      }
+    ],
+    "fabric-datagen": [
+      {
+        "value": "stackabletools.StackableToolsDataGenerator",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "mixins": ["stackabletools.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.18.5",
+    "minecraft": ">=1.20.0 <1.20.5",
+    "java": ">=17",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  }
 }

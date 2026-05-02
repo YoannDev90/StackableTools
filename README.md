@@ -1,6 +1,6 @@
 # 🛠️ StackableTools (Kotlin Edition)
 
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
 [![GitHub Release](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/releases)
@@ -17,6 +17,16 @@
 | :------------- | :------------------------------------------------------------------------------------ |
 | **CurseForge** | [Download on CurseForge](https://www.curseforge.com/minecraft/mc-mods/stackabletools) |
 | **Modrinth**   | [Download on Modrinth](https://modrinth.com/mod/stackabletools)                       |
+
+## 🎮 Version Support
+| Minecraft Version | Fabric Loader | Fabric API | Status       | Notes                       |
+| :---------------- | :------------ | :--------- | :----------- | :-------------------------- |
+| 1.20.0            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
+| 1.20.1            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
+| 1.20.2            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
+| 1.20.3            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
+| 1.20.4            | ≥0.18.5       | ≥0.97.3    | ✅ **Tested** | Fully tested & recommended  |
+| 1.20.5+           | ≥0.18.5       | ≥1.0.0     | ⚠️ Untested   | May require code updates    |
 
 ## ✨ Main Features
 - ⚔️ **Stackable Tools**: Swords, pickaxes, shovels, axes, and more are now stackable!

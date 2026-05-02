@@ -1,6 +1,6 @@
 # 🛠️ StackableTools (Édition Kotlin)
 
-[![Version Minecraft](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Version Minecraft](https://img.shields.io/badge/Minecraft-1.20-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![Licence](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoann/StackableTools/blob/master/LICENSE)
 [![Release GitHub](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoann/StackableTools/releases)
@@ -13,10 +13,20 @@
 **StackableTools** est un puissant mod Minecraft pour Fabric, réécrit en Kotlin, qui rend les outils empilables (stackables), révolutionnant la gestion de votre inventaire sans casser l'équilibre du jeu.
 
 ## 📥 Liens de téléchargement
-| Plateforme     | Lien                                                                                  |
-| :------------- | :------------------------------------------------------------------------------------ |
+| Plateforme     | Lien                                                                                      |
+| :------------- | :---------------------------------------------------------------------------------------- |
 | **CurseForge** | [Télécharger sur CurseForge](https://www.curseforge.com/minecraft/mc-mods/stackabletools) |
 | **Modrinth**   | [Télécharger sur Modrinth](https://modrinth.com/mod/stackabletools)                       |
+
+## 🎮 Support des versions
+| Version Minecraft | Fabric Loader | Fabric API | Statut       | Remarques                             |
+| :---------------- | :------------ | :--------- | :----------- | :------------------------------------ |
+| 1.20.0            | ≥0.18.5       | ≥0.97.0    | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.20.1            | ≥0.18.5       | ≥0.97.0    | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.20.2            | ≥0.18.5       | ≥0.97.0    | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.20.3            | ≥0.18.5       | ≥0.97.0    | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.20.4            | ≥0.18.5       | ≥0.97.3    | ✅ **Testé**  | Complètement testé & recommandé       |
+| 1.20.5+           | ≥0.18.5       | ≥1.0.0     | ⚠️ Non testé  | Peut nécessiter des mises à jour      |
 
 ## ✨ Fonctionnalités principales
 - ⚔️ **Outils empilables** : Épées, pioches, pelles, haches et plus sont désormais empilables !

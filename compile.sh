@@ -97,9 +97,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
     fi
 fi
 
-# Lecture de la config avec jq
-MC_VERSION=$(jq -r '.minecraft_version // empty' "$CONFIG_FILE")
-LOADER_VERSION=$(jq -r '.fabric_loader_version // empty' "$CONFIG_FILE")
+MC_VERSION=$(grep -E '^minecraft_version=' gradle.properties | cut -d'=' -f2)
+LOADER_VERSION=$(grep -E '^loader_version=' gradle.properties | cut -d'=' -f2)
 
 # Configuration des répertoires
 LAUNCHER_DIR=$(jq -r '.launcherDir // empty' "$CONFIG_FILE")
