@@ -1,9 +1,19 @@
 # 🛠️ StackableTools (Kotlin Edition)
 
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.2-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.3-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+
+
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/YoannDev90/StackableTools?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/releases)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/KrqAq3Cj?logo=modrinth&style=for-the-badge)](https://modrinth.com/mod/stackabletools)
+[![CurseForge Downloads](https://img.shields.io/curseforge/dt/1356234?logo=curseforge&style=for-the-badge)](https://www.curseforge.com/minecraft/mc-mods/stackabletools)
+
+
 
 ---
 
