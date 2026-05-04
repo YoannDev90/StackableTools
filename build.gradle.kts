@@ -36,12 +36,20 @@ fabricApi {
 	configureDataGeneration {
 		client = true
 	}
+	
+	configureTests {
+		createSourceSet = true
+		modId = "stackabletools-test"
+		enableGameTests = true
+		enableClientGameTests = false
+		eula = true
+	}
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
-	mappings("net.fabricmc:yarn:1.20.4+build.3:v2")
+	mappings("net.fabricmc:yarn:1.20.5+build.1:v2")
 	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
@@ -51,9 +59,9 @@ dependencies {
 	// TOML parser pour configuration (la dépendance est incluse dans le mod par empaquetage)
 	implementation("com.moandjiezana.toml:toml4j:0.7.2")
 	implementation("org.json:json:20240303")
-
-	// Afin d’empaqueter toml4j dans le JAR, on inclut le runtime dans la tâche jar.
 }
+
+// Afin d'empaqueter toml4j dans le JAR, on inclut le runtime dans la tâche jar.
 
 tasks.processResources {
 	inputs.property("version", version)
@@ -117,4 +125,12 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
+}
+
+// Tests are disabled by default (test structures are incomplete)
+// For GitHub Actions: enable with -DenableGameTests=true
+val enableGameTests = project.hasProperty("enableGameTests") && project.property("enableGameTests") == "true"
+
+tasks.named("runGameTest") {
+	onlyIf { enableGameTests }
 }

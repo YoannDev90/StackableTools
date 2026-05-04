@@ -1,5 +1,6 @@
 package stackabletools.mixin
 
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -30,8 +31,8 @@ abstract class ItemStackMixin {
      * Injected into the damage function of ItemStack.
      * Intercepts damage events before they are applied.
      */
-    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"], at = [At("HEAD")])
-    private fun onDamage(amount: Int, entity: LivingEntity, breakCallback: java.util.function.Consumer<LivingEntity>, ci: CallbackInfo) {
+    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"], at = [At("HEAD")])
+    private fun onDamage(amount: Int, entity: LivingEntity, slot: EquipmentSlot, ci: CallbackInfo) {
         // Prevent recursive triggers if we modify the stack within this function
         if (isProcessingDamageInternal.get()) return
         

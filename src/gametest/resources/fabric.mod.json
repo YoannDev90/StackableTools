@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "stackabletools-test",
+  "version": "1.0.0",
+  "name": "StackableTools GameTests",
+  "description": "Game tests for StackableTools mod",
+  "authors": ["Yoann"],
+  "contact": {
+    "homepage": "https://github.com/YoannDev90/StackableTools"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/stackabletools/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      {
+        "value": "stackabletools.StackableToolsGameTest",
+        "adapter": "kotlin"
+      },
+      {
+        "value": "stackabletools.StackableToolsMixinGameTest",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.5",
+    "minecraft": ">=1.20.5 <1.20.7",
+    "java": ">=17",
+    "fabric-api": "*",
+    "fabric-language-kotlin": "*"
+  }
+}
