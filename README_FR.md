@@ -21,10 +21,10 @@
 ## Support des versions
 | Version Minecraft | Fabric Loader | Fabric API | Statut       | Remarques                             |
 | :---------------- | :------------ | :--------- | :----------- | :------------------------------------ |
-| 1.21              | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté             |
-| 1.21.1            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté             |
-| 1.21.2            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté             |
-| 1.21.3            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté             |
+| 1.21              | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.21.1            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.21.2            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
+| 1.21.3            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
 | 1.21.4            | ≥0.16.10      | ≥0.117.0   | ✅ **Testé**  | Complètement testé & recommandé     |
 | 1.21.5+           | ≥0.16.14      | ≥0.120.0   | ⚠️ Non testé  | Peut nécessiter des mises à jour    |
 
