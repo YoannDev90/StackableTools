@@ -29,12 +29,12 @@
 | 1.20.5+           | ≥0.18.5       | ≥1.0.0     | ⚠️ Non testé  | Peut nécessiter des mises à jour      |
 
 ## Fonctionnalités principales
-- ⚔️ **Outils empilables** : Épées, pioches, pelles, haches et plus sont désormais empilables !
-- 🧪 **Support des potions** : Empilez vos potions (jusqu'à 16 par défaut).
-- 🛡️ **Isolation de la durabilité** : Seul l'objet utilisé subit des dégâts. Le reste de la pile reste intact !
-- ⚙️ **Entièrement configurable** : Ajustez la taille des piles pour chaque catégorie.
-- 🔄 **Compatible Mending** : Fonctionne parfaitement avec Mending (Raccommodage) et Unbreaking (Solidité).
-- 🏗️ **Insertion intelligente** : Les objets ramassés fusionnent automatiquement avec les piles existantes.
+- **Outils empilables** : Épées, pioches, pelles, haches et plus sont désormais empilables !
+- **Support des potions** : Empilez vos potions (jusqu'à 16 par défaut).
+- **Isolation de la durabilité** : Seul l'objet utilisé subit des dégâts. Le reste de la pile reste intact !
+- **Entièrement configurable** : Ajustez la taille des piles pour chaque catégorie.
+- **Compatible Mending** : Fonctionne parfaitement avec Mending (Raccommodage) et Unbreaking (Solidité).
+- **Insertion intelligente** : Les objets ramassés fusionnent automatiquement avec les piles existantes.
 
 ## Configuration (Développeur)
 > [!IMPORTANT]
@@ -64,9 +64,9 @@
 > Nous recommandons l'utilisation de **Freesm Launcher** (un fork de Prism) pour une meilleure expérience de modding.
 
 ## Prérequis
-- ☕ **Java 21+** (Cible la dernière JVM stable)
-- 🐘 **Gradle 8.11+**
-- 🧶 **Fabric Loader**
+- **Java 21+** (Cible la dernière JVM stable)
+- **Gradle 8.11+**
+- **Fabric Loader**
 
 ## Configuration facile
 Le fichier de configuration est généré dans `config/stackabletools.toml`.
@@ -88,6 +88,3 @@ Les contributions rendent la communauté open source formidable.
 
 ## Licence
 CC0 1.0 Universal. Voir [LICENSE](LICENSE) pour plus de détails.
-
----
-*Fait avec ❤️ par YoannDev90*

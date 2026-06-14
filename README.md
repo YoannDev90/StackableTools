@@ -74,9 +74,9 @@
 > We recommend using **Freesm Launcher** (a fork of Prism) for the best modding experience.
 
 ## Requirements
-- ☕ **Java 21+** (Targeting latest stable JVM)
-- 🐘 **Gradle 8.11+**
-- 🧶 **Fabric Loader**
+- **Java 21+** (Targeting latest stable JVM)
+- **Gradle 8.11+**
+- **Fabric Loader**
 
 ## Contributing
 Contributions are what make the open source community such an amazing place to learn, inspire, and create.
@@ -88,6 +88,3 @@ Contributions are what make the open source community such an amazing place to l
 
 ## License
 CC0 1.0 Universal. See [LICENSE](LICENSE) for details.
-
----
-*Made with ❤️ by YoannDev90*
