@@ -2,13 +2,10 @@ package stackabletools.mixin
 
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ArmorItem
-import net.minecraft.item.ElytraItem
 import net.minecraft.item.ItemStack
-import net.minecraft.item.PotionItem
-import net.minecraft.item.ToolItem
 import net.minecraft.item.SwordItem
 import net.minecraft.item.TridentItem
-import net.minecraft.item.EnchantedBookItem
+import net.minecraft.item.Items
 import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.Shadow
 import org.spongepowered.asm.mixin.injection.At
@@ -46,21 +43,12 @@ abstract class InventoryMixin {
         if (!StackableToolsUtils.isStackableItem(stack)) return
 
         // RULE: We do not stack damaged items to avoid loss of durability data or complex merges
-        if (stack.isDamaged && (stack.item is ToolItem || stack.item is ArmorItem || stack.item is SwordItem || stack.item is TridentItem || stack.item is ElytraItem)) {
+        if (stack.isDamaged && (stack.item is ArmorItem || stack.item is SwordItem || stack.item is TridentItem || stack.item === Items.ELYTRA)) {
             return
         }
 
         val cfg = ConfigManager.getConfig().stacking
-        // Determine the max stack size based on item category
-        val maxStackSize = when (stack.item) {
-            is SwordItem, is TridentItem -> cfg.maxWeaponsStackSize
-            is ToolItem -> cfg.maxToolStackSize
-            is PotionItem -> cfg.maxPotionStackSize
-            is EnchantedBookItem -> cfg.maxEnchantedBooksStackSize
-            is ElytraItem -> cfg.maxElytraStackSize
-            is ArmorItem -> cfg.maxArmorPieceStackSize
-            else -> cfg.maxStackSize
-        }.toInt()
+        val maxStackSize = StackableToolsUtils.maxStackFor(stack, cfg)
 
         var remaining = stack.count
         val originalCount = stack.count

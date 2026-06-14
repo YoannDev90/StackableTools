@@ -31,8 +31,8 @@ abstract class ItemStackMixin {
      * Injected into the damage function of ItemStack.
      * Intercepts damage events before they are applied.
      */
-    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;)V"], at = [At("HEAD")])
-    private fun onDamage(amount: Int, entity: LivingEntity, slot: EquipmentSlot, ci: CallbackInfo) {
+    @Inject(method = ["damage(ILnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;Lnet/minecraft/item/ItemStack;)V"], at = [At("HEAD")])
+    private fun onDamage(amount: Int, entity: LivingEntity, slot: EquipmentSlot, originalStack: ItemStack, ci: CallbackInfo) {
         // Prevent recursive triggers if we modify the stack within this function
         if (isProcessingDamageInternal.get()) return
         

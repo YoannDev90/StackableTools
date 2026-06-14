@@ -1,10 +1,9 @@
 # StackableTools (Kotlin Edition)
 
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.2-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.3-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.1-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.4-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.11-blue.svg?style=for-the-badge&logo=minecraft)](https://www.minecraft.net/)
 
 
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
@@ -31,12 +30,12 @@
 ## Version Support
 | Minecraft Version | Fabric Loader | Fabric API | Status       | Notes                       |
 | :---------------- | :------------ | :--------- | :----------- | :-------------------------- |
-| 1.20.0            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
-| 1.20.1            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
-| 1.20.2            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
-| 1.20.3            | ≥0.18.5       | ≥0.97.0    | ✅ Supported  | Community-tested (untested) |
-| 1.20.4            | ≥0.18.5       | ≥0.97.3    | ✅ **Tested** | Fully tested & recommended  |
-| 1.20.5+           | ≥0.18.5       | ≥1.0.0     | ⚠️ Untested   | May require code updates    |
+| 1.21              | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested             |
+| 1.21.1            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested             |
+| 1.21.2            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested             |
+| 1.21.3            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested             |
+| 1.21.4            | ≥0.16.10      | ≥0.117.0   | ✅ **Tested** | Fully tested & recommended  |
+| 1.21.5+           | ≥0.16.14      | ≥0.120.0   | ⚠️ Untested   | May require code updates    |
 
 ## Main Features
 - **Stackable Tools**: Swords, pickaxes, shovels, axes, and more are now stackable!

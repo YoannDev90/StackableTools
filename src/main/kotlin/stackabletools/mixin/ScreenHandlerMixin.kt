@@ -1,7 +1,13 @@
 package stackabletools.mixin
 
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.*
+import net.minecraft.item.ArmorItem
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.item.PotionItem
+import net.minecraft.item.SwordItem
+import net.minecraft.item.TridentItem
+import net.minecraft.component.DataComponentTypes
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 import org.spongepowered.asm.mixin.Mixin
@@ -42,15 +48,7 @@ abstract class ScreenHandlerMixin {
                 
                 val cfg = ConfigManager.getConfig().stacking
                 // Determine limits for the category
-                val maxStack = when (cursorStack.item) {
-                    is SwordItem, is TridentItem -> cfg.maxWeaponsStackSize
-                    is ToolItem -> cfg.maxToolStackSize
-                    is PotionItem -> cfg.maxPotionStackSize
-                    is EnchantedBookItem -> cfg.maxEnchantedBooksStackSize
-                    is ElytraItem -> cfg.maxElytraStackSize
-                    is ArmorItem -> cfg.maxArmorPieceStackSize
-                    else -> cfg.maxStackSize
-                }.toInt()
+                val maxStack = StackableToolsUtils.maxStackFor(cursorStack, cfg)
                 
                 val canTransfer = (maxStack - slotStack.count).coerceAtLeast(0)
                 if (canTransfer > 0) {

@@ -49,7 +49,7 @@ fabricApi {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
-	mappings("net.fabricmc:yarn:1.20.5+build.1:v2")
+	mappings("net.fabricmc:yarn:${providers.gradleProperty("yarn_mappings").get()}:v2")
 	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
@@ -72,12 +72,12 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-	options.release = 17
+	options.release = 21
 }
 
 kotlin {
 	compilerOptions {
-		jvmTarget = JvmTarget.JVM_17
+		jvmTarget = JvmTarget.JVM_21
 	}
 }
 
@@ -87,8 +87,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.jar {

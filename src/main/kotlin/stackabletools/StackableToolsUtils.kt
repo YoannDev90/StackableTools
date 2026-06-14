@@ -1,12 +1,10 @@
 package stackabletools
 
 import net.minecraft.item.ArmorItem
-import net.minecraft.item.ElytraItem
-import net.minecraft.item.EnchantedBookItem
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.PotionItem
 import net.minecraft.item.SwordItem
-import net.minecraft.item.ToolItem
 import net.minecraft.item.TridentItem
 import net.minecraft.registry.Registries
 import java.util.concurrent.ConcurrentHashMap
@@ -17,7 +15,7 @@ import net.minecraft.item.Items
 
 object StackableToolsUtils {
 
-    private val stackableCache = ConcurrentHashMap<String, Boolean>()
+    private val stackableCache = ConcurrentHashMap<Item, Boolean>()
     private var lastConfigHash = 0
 
     /**
@@ -50,7 +48,7 @@ object StackableToolsUtils {
         if (a.item !== b.item) return false
         
         // RULE: We only stack FRESH items (damage == 0).
-        if (a.item is ToolItem || a.item is ArmorItem || a.item is SwordItem || a.item is TridentItem || a.item is ElytraItem) {
+        if (a.item is ArmorItem || a.item is SwordItem || a.item is TridentItem || a.item === Items.ELYTRA) {
             if (a.damage > 0 || b.damage > 0) return false
         }
 
@@ -83,16 +81,31 @@ object StackableToolsUtils {
             lastConfigHash = configHash
         }
 
-        val itemId = Registries.ITEM.getId(stack.item).toString()
-        return stackableCache.getOrPut(itemId) {
-            computeIsStackable(stack, config, itemId)
+        val item = stack.item
+        return stackableCache.getOrPut(item) {
+            computeIsStackable(stack, config, item)
         }
     }
 
     /**
      * Internal logic to compute if an item is stackable.
      */
-    private fun computeIsStackable(stack: ItemStack, config: stackabletools.config.StackableToolsConfig, itemId: String): Boolean {
+    fun maxStackFor(stack: ItemStack, cfg: stackabletools.config.StackableToolsConfig.StackingConfig): Int {
+        val hasToolComponent = stack.get(DataComponentTypes.TOOL) != null
+
+        return when {
+            stack.item is SwordItem || stack.item is TridentItem -> cfg.maxWeaponsStackSize
+            hasToolComponent && stack.item !is SwordItem && stack.item !is TridentItem -> cfg.maxToolStackSize
+            stack.item is ArmorItem -> cfg.maxArmorPieceStackSize
+            stack.item is PotionItem -> cfg.maxPotionStackSize
+            stack.item === Items.ENCHANTED_BOOK -> cfg.maxEnchantedBooksStackSize
+            stack.item === Items.ELYTRA -> cfg.maxElytraStackSize
+            else -> cfg.maxStackSize
+        }.toInt().coerceAtLeast(1)
+    }
+
+    private fun computeIsStackable(stack: ItemStack, config: stackabletools.config.StackableToolsConfig, item: Item): Boolean {
+        val itemId = Registries.ITEM.getId(item).toString()
         val shortItemId = itemId.substringAfter(':')
 
         val excluded = config.stacking.excludedItemIds
@@ -101,13 +114,15 @@ object StackableToolsUtils {
         val active = config.stacking.activeCategories
         val isAll = StackingCategory.ALL in active
 
-        when (stack.item) {
-            is SwordItem, is TridentItem -> if (isAll || StackingCategory.WEAPONS in active) return true
-            is ToolItem -> if (isAll || StackingCategory.TOOLS in active) return true
-            is ArmorItem -> if (isAll || StackingCategory.ARMORS in active) return true
-            is PotionItem -> if (isAll || StackingCategory.POTIONS in active) return true
-            is EnchantedBookItem -> if (isAll || StackingCategory.ENCHANTED_BOOKS in active) return true
-            is ElytraItem -> if (isAll || StackingCategory.ELYTRA in active) return true
+        val hasToolComponent = stack.get(DataComponentTypes.TOOL) != null
+
+        when {
+            stack.item is SwordItem || stack.item is TridentItem -> if (isAll || StackingCategory.WEAPONS in active) return true
+            hasToolComponent && stack.item !is SwordItem && stack.item !is TridentItem -> if (isAll || StackingCategory.TOOLS in active) return true
+            stack.item is ArmorItem -> if (isAll || StackingCategory.ARMORS in active) return true
+            stack.item is PotionItem -> if (isAll || StackingCategory.POTIONS in active) return true
+            stack.item === Items.ENCHANTED_BOOK -> if (isAll || StackingCategory.ENCHANTED_BOOKS in active) return true
+            stack.item === Items.ELYTRA -> if (isAll || StackingCategory.ELYTRA in active) return true
         }
 
         val manual = config.stacking.manualStackableItemIds
