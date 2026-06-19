@@ -48,6 +48,12 @@ jobs:
             YARN=$(echo "$version_data" | jq -r '.yarn_mappings // empty')
             LOADER=$(echo "$version_data" | jq -r '.loader_version // empty')
 
+            if [ ! -d "src/mc-${MC_SRC}" ]; then
+              echo "Skipping $VER (no src/mc-${MC_SRC})"
+              continue
+            fi
+
+            echo "Building $VER..."
             PROP_ARGS=(-PmcVersion="$MC_SRC" -Pminecraft_version="$MC_VER" -Pfabric_api_version="$FABRIC_API")
             [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
             [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
