@@ -1,0 +1,49 @@
+name: Sync READMEs across branches
+
+on:
+  push:
+    branches:
+      - dev
+      - 1.20.x
+      - 1.21.x
+      - 26.1.x
+    paths:
+      - README.md
+      - README_FR.md
+
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, '[skip sync]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync READMEs to all branches
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SOURCE_BRANCH="${GITHUB_REF#refs/heads/}"
+          TARGETS=("dev" "1.20.x" "1.21.x" "26.1.x")
+
+          for target in "${TARGETS[@]}"; do
+            if [ "$target" = "$SOURCE_BRANCH" ]; then
+              continue
+            fi
+
+            if git show-ref --verify --quiet refs/remotes/origin/"$target"; then
+              git checkout "$target"
+              git checkout "$SOURCE_BRANCH" -- README.md README_FR.md
+              if ! git diff --cached --quiet; then
+                git commit -m "docs: sync READMEs from $SOURCE_BRANCH [skip sync]"
+                git push origin "$target"
+              fi
+            fi
+          done
