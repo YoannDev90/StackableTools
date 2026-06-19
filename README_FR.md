@@ -1,15 +1,19 @@
 # StackableTools (Édition Kotlin)
 
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
-[![Licence](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoann/StackableTools/blob/master/LICENSE)
-[![Release GitHub](https://img.shields.io/github/v/release/yoann/StackableTools?style=for-the-badge)](https://github.com/yoann/StackableTools/releases)
+[![Licence](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
+[![Release GitHub](https://img.shields.io/github/v/release/YoannDev90/StackableTools?style=for-the-badge)](https://github.com/YoannDev90/StackableTools/releases)
+[![Téléchargements Modrinth](https://img.shields.io/modrinth/dt/KrqAq3Cj?logo=modrinth&style=for-the-badge)](https://modrinth.com/mod/stackabletools)
+[![Téléchargements CurseForge](https://img.shields.io/curseforge/dt/1356234?logo=curseforge&style=for-the-badge)](https://www.curseforge.com/minecraft/mc-mods/stackabletools)
+
+
 
 ---
 
 - 🇬🇧 English : [README.md](README.md)
 - 🇫🇷 Français : ce fichier
 
-**StackableTools** est un puissant mod Minecraft pour Fabric, réécrit en Kotlin, qui rend les outils empilables (stackables), révolutionnant la gestion de votre inventaire sans casser l'équilibre du jeu.
+**StackableTools** est un puissant mod Minecraft pour Fabric, réécrit en Kotlin, qui rend les outils empilables, révolutionnant la gestion de votre inventaire sans casser l'équilibre du jeu.
 
 ## Liens de téléchargement
 | Plateforme     | Lien                                                                                      |
@@ -18,20 +22,19 @@
 | **Modrinth**   | [Télécharger sur Modrinth](https://modrinth.com/mod/stackabletools)                       |
 
 ## Support des versions
-| Version Minecraft | Fabric Loader | Fabric API | Statut       | Remarques                             |
-| :---------------- | :------------ | :--------- | :----------- | :------------------------------------ |
-| 1.21              | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
-| 1.21.1            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
-| 1.21.2            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
-| 1.21.3            | ≥0.16.9       | ≥0.107.0   | ✅ Compatible | Testé par la communauté (non vérifié) |
-| 1.21.4            | ≥0.16.10      | ≥0.117.0   | ✅ **Testé**  | Complètement testé & recommandé     |
-| 1.21.5+           | ≥0.16.14      | ≥0.120.0   | ⚠️ Non testé  | Peut nécessiter des mises à jour    |
+| Version | Support (Théorique) | Support (Testé complètement) |
+| :------ | :------------------ | :--------------------------- |
+| 1.20 – 1.20.6 | ✅ | ❌ |
+| 1.21.0 – 1.21.3 | ✅ | ❌ |
+| 1.21.4 | ✅ | ✅ |
+| 1.21.5 – 1.21.11 | ✅ | ❌ |
+| 26.1 – 26.1.2 | ✅ | ❌ |
 
 ## Fonctionnalités principales
 - **Outils empilables** : Épées, pioches, pelles, haches et plus sont désormais empilables !
 - **Support des potions** : Empilez vos potions (jusqu'à 16 par défaut).
 - **Isolation de la durabilité** : Seul l'objet utilisé subit des dégâts. Le reste de la pile reste intact !
-- **Entièrement configurable** : Ajustez la taille des piles pour chaque catégorie.
+- **Entièrement configurable** : Ajustez la taille des piles pour chaque catégorie (Outils, Potions, Enchantements).
 - **Compatible Mending** : Fonctionne parfaitement avec Mending (Raccommodage) et Unbreaking (Solidité).
 - **Insertion intelligente** : Les objets ramassés fusionnent automatiquement avec les piles existantes.
 
@@ -54,7 +57,7 @@
     ```
 
 ## Installation (Utilisateur)
-1.  Téléchargez le dernier `.jar` depuis la page des [Releases](https://github.com/yoann/StackableTools/releases).
+1.  Téléchargez le dernier `.jar` depuis la page des [Releases](https://github.com/yoanndev90/StackableTools/releases).
 2.  Installez **Fabric Loader** et **Fabric API**.
 3.  Placez le `.jar` dans votre dossier `mods/`.
 4.  Lancez et profitez d'un inventaire plus propre !
@@ -67,18 +70,8 @@
 - **Gradle 8.11+**
 - **Fabric Loader**
 
-## Configuration facile
-Le fichier de configuration est généré dans `config/stackabletools.toml`.
-
-Options disponibles :
-- `logging.enable` (true/false)
-- `stacking.max_stack_size` (64 par défaut)
-- `stacking.max_tool_stack_size` (8 par défaut)
-- `stacking.max_potion_stack_size` (16 par défaut)
-- `stacking.active_categories` (`["tools","potions"]` par défaut)
-
 ## Contribuer
-Les contributions rendent la communauté open source formidable.
+Les contributions sont ce qui rend la communauté open source si formidable pour apprendre, s'inspirer et créer.
 1. Forkez le projet.
 2. Créez votre branche de fonctionnalité (`git checkout -b feature/AmazingFeature`).
 3. Commitez vos changements (`git commit -m 'Add some AmazingFeature'`).
