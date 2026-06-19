@@ -42,7 +42,18 @@ jobs:
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Skip if no source directory
+        id: check_src
+        run: |
+          if [ -d "src/mc-${{ matrix.mc_src }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Skipping ${{ matrix.version }} (no src/mc-${{ matrix.mc_src }})"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build for ${{ matrix.version }}
+        if: steps.check_src.outputs.exists == 'true'
         run: |
           PROPS=(-DmcVersion="${{ matrix.mc_src }}" -PmcVersion="${{ matrix.mc_src }}" -Pminecraft_version="${{ matrix.mc_ver }}" -Pfabric_api_version="${{ matrix.fabric_api }}")
           [ -n "${{ matrix.yarn }}" ] && PROPS+=(-Pyarn_mappings="${{ matrix.yarn }}")
@@ -50,10 +61,12 @@ jobs:
           ./gradlew build "${PROPS[@]}" --no-daemon -q
 
       - name: Get mod version
+        if: steps.check_src.outputs.exists == 'true'
         id: mod_info
         run: echo "mod_version=$(grep '^mod_version' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
 
       - name: Publish to CurseForge + Modrinth
+        if: steps.check_src.outputs.exists == 'true'
         uses: tristankechlo/publish-mc-mod@v2.0.0
         with:
           mc-version: ${{ matrix.mc_ver }}

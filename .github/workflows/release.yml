@@ -13,13 +13,31 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  setup:
     runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.gen_matrix.outputs.matrix }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+      - id: gen_matrix
+        run: |
+          MATRIX=$(jq -c '{include: [.versions[] | {
+            version: .version,
+            mc_src: (.mcVersion // .version),
+            mc_ver: .minecraft_version,
+            fabric_api: .fabric_api_version,
+            yarn: (.yarn_mappings // ""),
+            loader: (.loader_version // "")
+          }]}' versions.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  build:
+    needs: setup
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -31,41 +49,60 @@ jobs:
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
 
-      - name: Read mod version
+      - name: Skip if no source directory
+        id: check_src
+        run: |
+          if [ -d "src/mc-${{ matrix.mc_src }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build ${{ matrix.version }}
+        if: steps.check_src.outputs.exists == 'true'
+        run: |
+          PROPS=(-DmcVersion="${{ matrix.mc_src }}" -PmcVersion="${{ matrix.mc_src }}" -Pminecraft_version="${{ matrix.mc_ver }}" -Pfabric_api_version="${{ matrix.fabric_api }}")
+          [ -n "${{ matrix.yarn }}" ] && PROPS+=(-Pyarn_mappings="${{ matrix.yarn }}")
+          [ -n "${{ matrix.loader }}" ] && PROPS+=(-Ploader_version="${{ matrix.loader }}")
+          ./gradlew clean build "${PROPS[@]}" --no-daemon -q
+
+      - name: Get mod version
+        if: steps.check_src.outputs.exists == 'true'
         id: mod_info
         run: echo "mod_version=$(grep '^mod_version' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
 
-      - name: Build all versions
+      - name: Rename and upload JAR
+        if: steps.check_src.outputs.exists == 'true'
+        run: |
+          MODVER="${{ steps.mod_info.outputs.mod_version }}"
+          mv "build/libs/stackabletools-${MODVER}.jar" "build/libs/stackabletools-${MODVER}-mc${{ matrix.version }}.jar"
+
+      - name: Upload artifact
+        if: steps.check_src.outputs.exists == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-mc-${{ matrix.version }}
+          path: build/libs/stackabletools-*.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all JARs
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-jars
+
+      - name: Collect JARs
         run: |
           mkdir -p dist
-          VERSION="${{ steps.mod_info.outputs.mod_version }}"
-
-          while read -r version_data; do
-            VER=$(echo "$version_data" | jq -r '.version')
-            MC_SRC=$(echo "$version_data" | jq -r '.mcVersion // .version')
-            MC_VER=$(echo "$version_data" | jq -r '.minecraft_version')
-            FABRIC_API=$(echo "$version_data" | jq -r '.fabric_api_version')
-            YARN=$(echo "$version_data" | jq -r '.yarn_mappings // empty')
-            LOADER=$(echo "$version_data" | jq -r '.loader_version // empty')
-
-            echo "--- Building $VER ($MC_VER) ---"
-
-            PROP_ARGS=(-PmcVersion="$MC_SRC" -Pminecraft_version="$MC_VER" -Pfabric_api_version="$FABRIC_API")
-            [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
-            [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
-
-            ./gradlew clean build "${PROP_ARGS[@]}" --no-daemon -q 2>&1 || exit 1
-
-            JAR="build/libs/stackabletools-${VERSION}.jar"
-            if [ -f "$JAR" ]; then
-              cp "$JAR" "dist/stackabletools-${VERSION}-mc${VER}.jar"
-              echo "  -> dist/stackabletools-${VERSION}-mc${VER}.jar"
-            fi
-            echo ""
-          done < <(jq -c '.versions[]' versions.json)
-
-      - name: List built artifacts
-        run: ls -lh dist/
+          find dist-jars -name "*.jar" -exec cp {} dist/ \;
+          echo "Collected JARs:"
+          ls -lh dist/
 
       - name: Bump version and push tag
         id: version_tag
