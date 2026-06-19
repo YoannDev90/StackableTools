@@ -63,7 +63,7 @@ while read -r version_data; do
     echo "--- Building for Minecraft $VERSION ($MINECRAFT_VER) ---"
 
     if [ "$DRY_RUN" = true ]; then
-        ARGS="-PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER"
+        ARGS="-DmcVersion=$MC_SRC -PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER"
         [ -n "$YARN" ] && ARGS="$ARGS -Pyarn_mappings=$YARN"
         ARGS="$ARGS -Pfabric_api_version=$FABRIC_API"
         [ -n "$LOADER" ] && ARGS="$ARGS -Ploader_version=$LOADER"
@@ -78,7 +78,7 @@ while read -r version_data; do
     $NO_DAEMON && GRADLE_ARGS+=(--no-daemon)
     $WARN && GRADLE_ARGS+=(--warning-mode=none)
 
-    PROP_ARGS=(-PmcVersion="$MC_SRC" -Pminecraft_version="$MINECRAFT_VER")
+    PROP_ARGS=(-DmcVersion="$MC_SRC" -PmcVersion="$MC_SRC" -Pminecraft_version="$MINECRAFT_VER")
     [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
     PROP_ARGS+=(-Pfabric_api_version="$FABRIC_API")
     [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
