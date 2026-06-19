@@ -1,147 +1,159 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-plugins {
-	id("net.fabricmc.fabric-loom-remap")
-	`maven-publish`
-	id("org.jetbrains.kotlin.jvm") version "2.3.20"
-}
+val sysMcVersion: String = System.getProperty("mcVersion") ?: "1.21.4"
+val mcVersion: String = (project.findProperty("mcVersion") as? String) ?: sysMcVersion
+val is261 = mcVersion.startsWith("26")
 
-val mcVersion: String = providers.gradleProperty("mcVersion").orElse("1.21.4").get()
+plugins {
+    id(
+        if ((System.getProperty("mcVersion") ?: "1.21.4").startsWith("26"))
+            "net.fabricmc.fabric-loom"
+        else
+            "net.fabricmc.fabric-loom-remap"
+    )
+    `maven-publish`
+    id("org.jetbrains.kotlin.jvm") version "2.3.20"
+}
 
 version = providers.gradleProperty("mod_version").get()
 group = providers.gradleProperty("maven_group").get()
 
 base {
-	archivesName = providers.gradleProperty("archives_base_name")
-}
-
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+    archivesName = providers.gradleProperty("archives_base_name")
 }
 
 loom {
-	splitEnvironmentSourceSets()
+    splitEnvironmentSourceSets()
 
-	mods {
-		register("stackabletools") {
-			sourceSet(sourceSets.main.get())
-			sourceSet(sourceSets.getByName("client"))
-		}
-	}
+    mods {
+        register("stackabletools") {
+            sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets.getByName("client"))
+        }
+    }
 }
 
-fabricApi {
-	configureDataGeneration {
-		client = true
-	}
-	
-	configureTests {
-		createSourceSet = true
-		modId = "stackabletools-test"
-		enableGameTests = true
-		enableClientGameTests = false
-		eula = true
-	}
+if (!is261) {
+    fabricApi {
+        configureDataGeneration {
+            client = true
+        }
+
+        configureTests {
+            createSourceSet = true
+            modId = "stackabletools-test"
+            enableGameTests = true
+            enableClientGameTests = false
+            eula = true
+        }
+    }
 }
 
-	sourceSets {
-	named("main") {
-		java.srcDir("src/mc-$mcVersion/kotlin")
-	}
-	named("gametest") {
-		java.setSrcDirs(listOf("src/mc-$mcVersion/gametest/kotlin"))
-	}
+sourceSets {
+    named("main") {
+        java.srcDir("src/mc-$mcVersion/kotlin")
+    }
+    if (!is261) {
+        named("gametest") {
+            java.setSrcDirs(listOf("src/mc-$mcVersion/gametest/kotlin"))
+        }
+    }
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
-	mappings("net.fabricmc:yarn:${providers.gradleProperty("yarn_mappings").get()}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
+    minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
-	modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
-	
-	// TOML parser pour configuration (la dépendance est incluse dans le mod par empaquetage)
-	implementation("com.moandjiezana.toml:toml4j:0.7.2")
-	implementation("org.json:json:20240303")
+    if (is261) {
+        implementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
+        implementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
+        implementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+    } else {
+        @Suppress("UnstableApiUsage")
+        project.dependencies.add("mappings", "net.fabricmc:yarn:${providers.gradleProperty("yarn_mappings").get()}:v2")
+        @Suppress("UnstableApiUsage")
+        project.dependencies.add("modImplementation", "net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
+        @Suppress("UnstableApiUsage")
+        project.dependencies.add("modImplementation", "net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
+        @Suppress("UnstableApiUsage")
+        project.dependencies.add("modImplementation", "net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+    }
+
+    implementation("com.moandjiezana.toml:toml4j:0.7.2")
+    implementation("org.json:json:20240303")
 }
-
-// Afin d'empaqueter toml4j dans le JAR, on inclut le runtime dans la tâche jar.
 
 tasks.processResources {
-	inputs.property("version", version)
+    inputs.property("version", version)
 
-	filesMatching("fabric.mod.json") {
-		expand("version" to version)
-	}
+    filesMatching("fabric.mod.json") {
+        expand("version" to version)
+    }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-	options.release = 21
-}
-
-kotlin {
-	compilerOptions {
-		jvmTarget = JvmTarget.JVM_21
-	}
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+if (is261) {
+    tasks.withType<JavaCompile>().configureEach {
+        options.release = 25
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_25
+        }
+    }
+    java {
+        withSourcesJar()
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
+    }
+} else {
+    tasks.withType<JavaCompile>().configureEach {
+        options.release = 21
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_21
+        }
+    }
+    java {
+        withSourcesJar()
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
 }
 
 tasks.jar {
-	inputs.property("archivesName", base.archivesName)
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    inputs.property("archivesName", base.archivesName)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}" }
-	}
+    from("LICENSE") {
+        rename { "${it}_${base.archivesName.get()}" }
+    }
 
-	// Embeds only the needed external libs (toml4j, org.json) to avoid classloader mismatches
-	from({
-		configurations.runtimeClasspath.get()
-			.filter { it.name.endsWith(".jar") }
-			.filter { it.name.contains("toml4j") || it.name.contains("json") }
-			.map { zipTree(it) }
-	}) {
-		exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
-	}
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.name.endsWith(".jar") }
+            .filter { it.name.contains("toml4j") || it.name.contains("json") }
+            .map { zipTree(it) }
+    }) {
+        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+    }
 }
 
 publishing {
-	publications {
-		register<MavenPublication>("mavenJava") {
-			artifactId = base.archivesName.get()
-			from(components["java"])
-		}
-	}
+    publications {
+        register<MavenPublication>("mavenJava") {
+            artifactId = base.archivesName.get()
+            from(components["java"])
+        }
+    }
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
+    repositories {
+
+    }
 }
 
-// Tests are disabled by default (test structures are incomplete)
-// For GitHub Actions: enable with -DenableGameTests=true
-val enableGameTests = project.hasProperty("enableGameTests") && project.property("enableGameTests") == "true"
-
-tasks.named("runGameTest") {
-	onlyIf { enableGameTests }
+if (!is261) {
+    val enableGameTests = project.hasProperty("enableGameTests") && project.property("enableGameTests") == "true"
+    tasks.matching { it.name == "runGameTest" }.configureEach {
+        onlyIf { enableGameTests }
+    }
 }

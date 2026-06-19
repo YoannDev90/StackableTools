@@ -56,13 +56,18 @@ while read -r version_data; do
     VERSION=$(echo "$version_data" | jq -r '.version')
     MC_SRC=$(echo "$version_data" | jq -r '.mcVersion // .version')
     MINECRAFT_VER=$(echo "$version_data" | jq -r '.minecraft_version')
-    YARN=$(echo "$version_data" | jq -r '.yarn_mappings')
     FABRIC_API=$(echo "$version_data" | jq -r '.fabric_api_version')
+    YARN=$(echo "$version_data" | jq -r '.yarn_mappings // empty')
+    LOADER=$(echo "$version_data" | jq -r '.loader_version // empty')
 
     echo "--- Building for Minecraft $VERSION ($MINECRAFT_VER) ---"
 
     if [ "$DRY_RUN" = true ]; then
-        echo "  [DRY-RUN] Would build: -PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER -Pyarn_mappings=$YARN -Pfabric_api_version=$FABRIC_API"
+        ARGS="-PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER"
+        [ -n "$YARN" ] && ARGS="$ARGS -Pyarn_mappings=$YARN"
+        ARGS="$ARGS -Pfabric_api_version=$FABRIC_API"
+        [ -n "$LOADER" ] && ARGS="$ARGS -Ploader_version=$LOADER"
+        echo "  [DRY-RUN] Would build: $ARGS"
         echo ""
         continue
     fi
@@ -73,12 +78,13 @@ while read -r version_data; do
     $NO_DAEMON && GRADLE_ARGS+=(--no-daemon)
     $WARN && GRADLE_ARGS+=(--warning-mode=none)
 
+    PROP_ARGS=(-PmcVersion="$MC_SRC" -Pminecraft_version="$MINECRAFT_VER")
+    [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
+    PROP_ARGS+=(-Pfabric_api_version="$FABRIC_API")
+    [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
+
     START_TIME=$(date +%s)
-    ./gradlew "${GRADLE_ARGS[@]}" \
-        -PmcVersion="$MC_SRC" \
-        -Pminecraft_version="$MINECRAFT_VER" \
-        -Pyarn_mappings="$YARN" \
-        -Pfabric_api_version="$FABRIC_API" \
+    ./gradlew "${GRADLE_ARGS[@]}" "${PROP_ARGS[@]}" \
         2>&1 | while IFS= read -r line; do echo "  $line"; done
 
     EXIT_CODE=${PIPESTATUS[0]}

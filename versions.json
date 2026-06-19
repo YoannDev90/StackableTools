@@ -99,6 +99,27 @@
       "minecraft_version": "1.21.11",
       "yarn_mappings": "1.21.11+build.6",
       "fabric_api_version": "0.141.4+1.21.11"
+    },
+    {
+      "version": "26.1",
+      "mcVersion": "26.1",
+      "minecraft_version": "26.1",
+      "fabric_api_version": "0.145.1+26.1",
+      "loader_version": "0.19.3"
+    },
+    {
+      "version": "26.1.1",
+      "mcVersion": "26.1",
+      "minecraft_version": "26.1.1",
+      "fabric_api_version": "0.145.4+26.1.1",
+      "loader_version": "0.19.3"
+    },
+    {
+      "version": "26.1.2",
+      "mcVersion": "26.1",
+      "minecraft_version": "26.1.2",
+      "fabric_api_version": "0.152.1+26.1.2",
+      "loader_version": "0.19.3"
     }
   ]
 }
