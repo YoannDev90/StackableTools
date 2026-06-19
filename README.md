@@ -28,14 +28,13 @@
 | **Modrinth**   | [Download on Modrinth](https://modrinth.com/mod/stackabletools)                       |
 
 ## Version Support
-| Minecraft Version | Fabric Loader | Fabric API | Status       | Notes                       |
-| :---------------- | :------------ | :--------- | :----------- | :-------------------------- |
-| 1.21              | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested (untested) |
-| 1.21.1            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested (untested) |
-| 1.21.2            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested (untested) |
-| 1.21.3            | ≥0.16.9       | ≥0.107.0   | ✅ Supported  | Community-tested (untested) |
-| 1.21.4            | ≥0.16.10      | ≥0.117.0   | ✅ **Tested** | Fully tested & recommended  |
-| 1.21.5+           | ≥0.16.14      | ≥0.120.0   | ⚠️ Untested   | May require code updates    |
+| Version | Supported (Theoretical) | Supported (Fully Tested) |
+| :------ | :---------------------- | :----------------------- |
+| 1.20 – 1.20.6 | ✅ | ❌ |
+| 1.21.0 – 1.21.3 | ✅ | ❌ |
+| 1.21.4 | ✅ | ✅ |
+| 1.21.5 – 1.21.11 | ✅ | ❌ |
+| 26.1 – 26.1.2 | ✅ | ❌ |
 
 ## Main Features
 - **Stackable Tools**: Swords, pickaxes, shovels, axes, and more are now stackable!
