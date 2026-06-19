@@ -6,6 +6,8 @@ plugins {
 	id("org.jetbrains.kotlin.jvm") version "2.3.20"
 }
 
+val mcVersion: String = providers.gradleProperty("mcVersion").orElse("1.21.4").get()
+
 version = providers.gradleProperty("mod_version").get()
 group = providers.gradleProperty("maven_group").get()
 
@@ -43,6 +45,15 @@ fabricApi {
 		enableGameTests = true
 		enableClientGameTests = false
 		eula = true
+	}
+}
+
+sourceSets {
+	named("main") {
+		java.srcDir("src/mc-$mcVersion/kotlin")
+	}
+	named("gametest") {
+		java.srcDir("src/mc-$mcVersion/gametest/kotlin")
 	}
 }
 

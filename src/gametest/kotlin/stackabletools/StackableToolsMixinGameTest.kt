@@ -24,7 +24,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ArmorItemMixin: Armor pieces should have custom max stack size.
 	 * Verifies that Item.getMaxCount() returns the configured armor stack size.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorItemMixinMaxStackSize(context: TestContext) {
 		val helmet = ItemStack(Items.DIAMOND_HELMET, 1)
 		val maxCount = helmet.maxCount
@@ -41,7 +41,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ElytraItemMixin: Elytra should have custom max stack size.
 	 * Verifies that Item.getMaxCount() returns the configured elytra stack size.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testElytraItemMixinMaxStackSize(context: TestContext) {
 		val elytra = ItemStack(Items.ELYTRA, 1)
 		val maxCount = elytra.maxCount
@@ -58,7 +58,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ArmorItemMixin with multiple armor types.
 	 * Verifies that different armor pieces all respect the configured max stack size.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorItemMixinMultipleTypes(context: TestContext) {
 		val helmet = ItemStack(Items.DIAMOND_HELMET, 1)
 		val chestplate = ItemStack(Items.DIAMOND_CHESTPLATE, 1)
@@ -82,7 +82,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ItemStackMixin damage behavior: Fresh stacked tools should separate when damaged.
 	 * Verifies that damage event on a fresh stacked tool causes separation logic.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testItemStackMixinToolSeparation(context: TestContext) {
 		val stack = ItemStack(Items.DIAMOND_PICKAXE, 5)
 		
@@ -98,7 +98,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ItemStackMixin: Damaged tools should not trigger separation.
 	 * Verifies that already-damaged tools don't activate the separation mixin.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testItemStackMixinPreventsDamageSeparation(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		pickaxe.damage = 10
@@ -115,7 +115,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ArmorSlotMixin: Equipment slots should reject stacks.
 	 * Verifies that armor/elytra cannot be stacked in equipment slots.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorSlotMixinRejectsStacks(context: TestContext) {
 		val helmet = ItemStack(Items.DIAMOND_HELMET, 5)
 		
@@ -132,7 +132,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ScreenHandlerMixin: Clicking items should trigger merge logic.
 	 * Verifies that screen handler interactions are detected correctly.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testScreenHandlerMixinDetectsStackableItems(context: TestContext) {
 		val sword1 = ItemStack(Items.DIAMOND_SWORD, 1)
 		val sword2 = ItemStack(Items.DIAMOND_SWORD, 1)
@@ -148,7 +148,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test InventoryMixin: Items should merge in inventory insertions.
 	 * Verifies that custom stacking logic applies during inventory.insertStack.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testInventoryMixinStackMerging(context: TestContext) {
 		val pickaxe1 = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val pickaxe2 = ItemStack(Items.DIAMOND_PICKAXE, 1)
@@ -169,7 +169,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ArmorItemMixin with tools: Tools should have tool max stack size.
 	 * Verifies that ArmorItemMixin only affects ArmorItem instances, not ToolItems.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorItemMixinDoesNotAffectTools(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val maxToolStackSize = ConfigManager.getConfig().stacking.maxToolStackSize.toInt()
@@ -186,7 +186,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ItemStackMixin thread safety: Re-entry guard prevents infinite recursion.
 	 * Verifies that damage separation logic is properly guarded.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testItemStackMixinNoInfiniteRecursion(context: TestContext) {
 		val stack = ItemStack(Items.DIAMOND_PICKAXE, 3)
 		stack.damage = 0
@@ -203,7 +203,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ArmorSlotMixin: Different armor types in inventory.
 	 * Verifies that different armor pieces are all stackable in inventory.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorSlotMixinMultipleArmorTypes(context: TestContext) {
 		val helmet = ItemStack(Items.DIAMOND_HELMET, 1)
 		val chestplate = ItemStack(Items.DIAMOND_CHESTPLATE, 1)
@@ -222,7 +222,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test InventoryMixin with max stack size enforcement.
 	 * Verifies that max stack size is respected for each item category.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testInventoryMixinRespectsCategoryMaxStackSize(context: TestContext) {
 		val config = ConfigManager.getConfig().stacking
 		
@@ -241,7 +241,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ScreenHandlerMixin: Incompatible items should not merge.
 	 * Verifies that the screen handler rejects merging incompatible stacks.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testScreenHandlerMixinRejectsIncompatible(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val axe = ItemStack(Items.DIAMOND_AXE, 1)
@@ -259,7 +259,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test ItemStackMixin with potions: Potions should not trigger tool separation.
 	 * Verifies that damage mixin only affects tools, not potions.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testItemStackMixinOnlyAffectsTools(context: TestContext) {
 		val potion = ItemStack(Items.POTION, 5)
 		
@@ -275,7 +275,7 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 * Test combined mixin behavior: Full stacking lifecycle.
 	 * Verifies that all mixins work together for complete stacking support.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testCombinedMixinBehavior(context: TestContext) {
 		val config = ConfigManager.getConfig().stacking
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
@@ -301,13 +301,12 @@ public class StackableToolsMixinGameTest : FabricGameTest {
 	 */
 	override fun invokeTestMethod(context: TestContext, method: Method) {
 		try {
-			// Ensure configuration is loaded before test
 			ConfigManager.loadConfig()
-			
-			// Run the test method
 			method.invoke(this, context)
+		} catch (e: java.lang.reflect.InvocationTargetException) {
+			context.throwGameTestException("Test failed: ${e.cause?.message ?: e.cause?.javaClass?.simpleName ?: "Unknown error"}")
 		} catch (e: Exception) {
-			context.throwGameTestException("Test failed with exception: ${e.message}")
+			context.throwGameTestException("Test failed: ${e.message ?: e.javaClass.simpleName}")
 		}
 	}
 }

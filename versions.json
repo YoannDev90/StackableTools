@@ -1,0 +1,22 @@
+{
+  "launcherDir": "/home/yoann/.var/app/org.freesmTeam.freesmlauncher/data/FreesmLauncher/",
+  "location": "minecraft/mods/",
+  "instances": {
+    "1.21.0-1.21.3": "instances/1.21/",
+    "1.21.4": "instances/1.21.4/"
+  },
+  "versions": [
+    {
+      "version": "1.21.0-1.21.3",
+      "minecraft_version": "1.21",
+      "yarn_mappings": "1.21+build.1",
+      "fabric_api_version": "0.98.0+1.21"
+    },
+    {
+      "version": "1.21.4",
+      "minecraft_version": "1.21.4",
+      "yarn_mappings": "1.21.4+build.8",
+      "fabric_api_version": "0.117.0+1.21.4"
+    }
+  ]
+}

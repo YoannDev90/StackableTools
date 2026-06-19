@@ -23,7 +23,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that two identical diamond pickaxes can be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testIdenticalToolsCanStack(context: TestContext) {
 		val pickaxe1 = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val pickaxe2 = ItemStack(Items.DIAMOND_PICKAXE, 1)
@@ -38,7 +38,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that damaged tools cannot be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testDamagedToolsCannotStack(context: TestContext) {
 		val pickaxe1 = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val pickaxe2 = ItemStack(Items.DIAMOND_PICKAXE, 1)
@@ -56,7 +56,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that different item types cannot be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testDifferentItemsCannotStack(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val axe = ItemStack(Items.DIAMOND_AXE, 1)
@@ -71,7 +71,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that empty stacks cannot be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testEmptyStacksCannotStack(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		val empty = ItemStack.EMPTY
@@ -86,7 +86,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that diamond pickaxes are identified as stackable when tools category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testToolsAreStackableWhenCategoryActive(context: TestContext) {
 		val pickaxe = ItemStack(Items.DIAMOND_PICKAXE, 1)
 		
@@ -100,7 +100,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that potions are identified as stackable when potions category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testPotionsAreStackableWhenCategoryActive(context: TestContext) {
 		val potion = ItemStack(Items.POTION, 1)
 		
@@ -114,7 +114,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that enchanted books are identified as stackable when enchanted books category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testEnchantedBooksAreStackable(context: TestContext) {
 		val enchantedBook = ItemStack(Items.ENCHANTED_BOOK, 1)
 		
@@ -128,7 +128,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that weapons (swords) are identified as stackable when weapons category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testWeaponsAreStackableWhenCategoryActive(context: TestContext) {
 		val sword = ItemStack(Items.DIAMOND_SWORD, 1)
 		
@@ -142,7 +142,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that armor pieces are identified as stackable when armors category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testArmorIsStackableWhenCategoryActive(context: TestContext) {
 		val helmet = ItemStack(Items.DIAMOND_HELMET, 1)
 		
@@ -156,7 +156,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that elytra is identified as stackable when elytra category is active.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testElytraIsStackableWhenCategoryActive(context: TestContext) {
 		val elytra = ItemStack(Items.ELYTRA, 1)
 		
@@ -170,7 +170,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that regular items (like dirt) are not stackable.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testRegularItemsNotStackable(context: TestContext) {
 		val dirt = ItemStack(Items.DIRT, 1)
 		
@@ -184,7 +184,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that empty stacks are not stackable.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testEmptyStackNotStackable(context: TestContext) {
 		val empty = ItemStack.EMPTY
 		
@@ -198,7 +198,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that two identical swords without damage can be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testIdenticalSwordsCanStack(context: TestContext) {
 		val sword1 = ItemStack(Items.DIAMOND_SWORD, 1)
 		val sword2 = ItemStack(Items.DIAMOND_SWORD, 1)
@@ -213,7 +213,7 @@ public class StackableToolsGameTest : FabricGameTest {
 	/**
 	 * Test that armor pieces with different damage levels cannot be stacked.
 	 */
-	@GameTest
+	@GameTest(templateName = "fabric-gametest-api-v1:empty")
 	public fun testDifferentlyDamagedArmorCannotStack(context: TestContext) {
 		val helmet1 = ItemStack(Items.DIAMOND_HELMET, 1)
 		val helmet2 = ItemStack(Items.DIAMOND_HELMET, 1)
@@ -232,13 +232,12 @@ public class StackableToolsGameTest : FabricGameTest {
 	 */
 	override fun invokeTestMethod(context: TestContext, method: Method) {
 		try {
-			// Ensure configuration is loaded before test
 			ConfigManager.loadConfig()
-			
-			// Run the test method
 			method.invoke(this, context)
+		} catch (e: java.lang.reflect.InvocationTargetException) {
+			context.throwGameTestException("Test failed: ${e.cause?.message ?: e.cause?.javaClass?.simpleName ?: "Unknown error"}")
 		} catch (e: Exception) {
-			context.throwGameTestException("Test failed with exception: ${e.message}")
+			context.throwGameTestException("Test failed: ${e.message ?: e.javaClass.simpleName}")
 		}
 	}
 }
