@@ -1,86 +1,112 @@
 name: Multi-Release
 
 on:
-    workflow_dispatch:
-        inputs:
-            release-body:
-                description: "Changelog for this release"
-                type: string
-                required: false
-                default: "Manual release from build branch."
+  workflow_dispatch:
+    inputs:
+      release-body:
+        description: "Changelog for this release"
+        type: string
+        required: false
+        default: ""
 
 permissions:
-    contents: write
+  contents: write
 
 jobs:
-    release:
-        runs-on: ubuntu-24.04
-        steps:
-            - name: Checkout repository (Master)
-              uses: actions/checkout@v4
-              with:
-                  ref: master
-                  path: master-repo
-                  fetch-depth: 0
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Bump version if needed
-              id: version_check
-              shell: bash
-              run: |
-                  cd master-repo
-                  git config user.name "github-actions"
-                  git config user.email "github-actions@github.com"
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "25"
+          distribution: "zulu"
+          cache: "gradle"
 
-                  # Function to increment patch version
-                  increment_version() {
-                    local v=$1
-                    local major=$(echo $v | cut -d. -f1)
-                    local minor=$(echo $v | cut -d. -f2)
-                    local patch=$(echo $v | cut -d. -f3)
-                    echo "$major.$minor.$((patch + 1))"
-                  }
+      - name: Make gradle wrapper executable
+        run: chmod +x ./gradlew
 
-                  # Load version from gradle.properties
-                  VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2)
-                  git fetch --tags
+      - name: Read mod version
+        id: mod_info
+        run: echo "mod_version=$(grep '^mod_version' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
 
-                  # Check if tag already exists and increment version until it's unique
-                  while git rev-parse "v$VERSION" >/dev/null 2>&1; do
-                    echo "Tag v$VERSION already exists. Counting up..."
-                    VERSION=$(increment_version $VERSION)
-                  done
+      - name: Build all versions
+        run: |
+          mkdir -p dist
+          VERSION="${{ steps.mod_info.outputs.mod_version }}"
 
-                  # Get current version again for comparison
-                  CURRENT_VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2)
-                  if [ "$VERSION" != "$CURRENT_VERSION" ]; then
-                    echo "Updating version in gradle.properties to $VERSION"
-                    sed -i "s/mod_version=$CURRENT_VERSION/mod_version=$VERSION/" gradle.properties
-                    git add gradle.properties
-                    git commit -m "chore: bump version to $VERSION [skip ci]"
-                    git push origin master
-                  fi
+          while read -r version_data; do
+            VER=$(echo "$version_data" | jq -r '.version')
+            MC_SRC=$(echo "$version_data" | jq -r '.mcVersion // .version')
+            MC_VER=$(echo "$version_data" | jq -r '.minecraft_version')
+            FABRIC_API=$(echo "$version_data" | jq -r '.fabric_api_version')
+            YARN=$(echo "$version_data" | jq -r '.yarn_mappings // empty')
+            LOADER=$(echo "$version_data" | jq -r '.loader_version // empty')
 
-                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "--- Building $VER ($MC_VER) ---"
 
-            - name: Checkout Build branch
-              uses: actions/checkout@v4
-              with:
-                  ref: build
-                  path: build-artifacts
+            PROP_ARGS=(-PmcVersion="$MC_SRC" -Pminecraft_version="$MC_VER" -Pfabric_api_version="$FABRIC_API")
+            [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
+            [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
 
-            - name: Push Tag
-              run: |
-                  cd master-repo
-                  git tag v${{ steps.version_check.outputs.version }}
-                  git push origin v${{ steps.version_check.outputs.version }}
+            ./gradlew clean build "${PROP_ARGS[@]}" --no-daemon -q 2>&1 || exit 1
 
-            - name: Create GitHub Release
-              uses: softprops/action-gh-release@v2
-              with:
-                  tag_name: v${{ steps.version_check.outputs.version }}
-                  name: Release v${{ steps.version_check.outputs.version }}
-                  body: ${{ github.event.inputs.release-body }}
-                  generate_release_notes: true
-                  files: build-artifacts/*.jar
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            JAR="build/libs/stackabletools-${VERSION}.jar"
+            if [ -f "$JAR" ]; then
+              cp "$JAR" "dist/stackabletools-${VERSION}-mc${VER}.jar"
+              echo "  -> dist/stackabletools-${VERSION}-mc${VER}.jar"
+            fi
+            echo ""
+          done < <(jq -c '.versions[]' versions.json)
+
+      - name: List built artifacts
+        run: ls -lh dist/
+
+      - name: Bump version and push tag
+        id: version_tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          increment_version() {
+            local v=$1
+            local major=$(echo "$v" | cut -d. -f1)
+            local minor=$(echo "$v" | cut -d. -f2)
+            local patch=$(echo "$v" | cut -d. -f3)
+            echo "$major.$minor.$((patch + 1))"
+          }
+
+          VERSION=$(grep '^mod_version' gradle.properties | cut -d= -f2)
+          git fetch --tags
+
+          while git rev-parse "v$VERSION" >/dev/null 2>&1; do
+            VERSION=$(increment_version "$VERSION")
+          done
+
+          CURRENT_VERSION=$(grep '^mod_version' gradle.properties | cut -d= -f2)
+          if [ "$VERSION" != "$CURRENT_VERSION" ]; then
+            sed -i "s/^mod_version=$CURRENT_VERSION/mod_version=$VERSION/" gradle.properties
+            git add gradle.properties
+            git commit -m "chore: bump version to $VERSION [skip ci]"
+            git push origin "${GITHUB_REF#refs/heads/}"
+          fi
+
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version_tag.outputs.version }}
+          name: Release v${{ steps.version_tag.outputs.version }}
+          body: ${{ github.event.inputs.release-body }}
+          generate_release_notes: true
+          files: dist/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
