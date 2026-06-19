@@ -48,12 +48,12 @@ fabricApi {
 	}
 }
 
-sourceSets {
+	sourceSets {
 	named("main") {
 		java.srcDir("src/mc-$mcVersion/kotlin")
 	}
 	named("gametest") {
-		java.srcDir("src/mc-$mcVersion/gametest/kotlin")
+		java.setSrcDirs(listOf("src/mc-$mcVersion/gametest/kotlin"))
 	}
 }
 

@@ -2,21 +2,103 @@
   "launcherDir": "/home/yoann/.var/app/org.freesmTeam.freesmlauncher/data/FreesmLauncher/",
   "location": "minecraft/mods/",
   "instances": {
-    "1.21.0-1.21.3": "instances/1.21/",
-    "1.21.4": "instances/1.21.4/"
+    "1.21.0": "instances/1.21/",
+    "1.21.1": "instances/1.21.1/",
+    "1.21.2": "instances/1.21.2/",
+    "1.21.3": "instances/1.21.3/",
+    "1.21.4": "instances/1.21.4/",
+    "1.21.5": "instances/1.21.5/",
+    "1.21.6": "instances/1.21.6/",
+    "1.21.7": "instances/1.21.7/",
+    "1.21.8": "instances/1.21.8/",
+    "1.21.9": "instances/1.21.9/",
+    "1.21.10": "instances/1.21.10/",
+    "1.21.11": "instances/1.21.11/"
   },
   "versions": [
     {
-      "version": "1.21.0-1.21.3",
+      "version": "1.21.0",
+      "mcVersion": "1.21.0-1.21.3",
       "minecraft_version": "1.21",
-      "yarn_mappings": "1.21+build.1",
-      "fabric_api_version": "0.98.0+1.21"
+      "yarn_mappings": "1.21+build.9",
+      "fabric_api_version": "0.102.0+1.21"
+    },
+    {
+      "version": "1.21.1",
+      "mcVersion": "1.21.0-1.21.3",
+      "minecraft_version": "1.21.1",
+      "yarn_mappings": "1.21.1+build.3",
+      "fabric_api_version": "0.116.12+1.21.1"
+    },
+    {
+      "version": "1.21.2",
+      "mcVersion": "1.21.0-1.21.3",
+      "minecraft_version": "1.21.2",
+      "yarn_mappings": "1.21.2+build.1",
+      "fabric_api_version": "0.106.1+1.21.2"
+    },
+    {
+      "version": "1.21.3",
+      "mcVersion": "1.21.0-1.21.3",
+      "minecraft_version": "1.21.3",
+      "yarn_mappings": "1.21.3+build.2",
+      "fabric_api_version": "0.114.1+1.21.3"
     },
     {
       "version": "1.21.4",
+      "mcVersion": "1.21.4",
       "minecraft_version": "1.21.4",
       "yarn_mappings": "1.21.4+build.8",
-      "fabric_api_version": "0.117.0+1.21.4"
+      "fabric_api_version": "0.119.4+1.21.4"
+    },
+    {
+      "version": "1.21.5",
+      "mcVersion": "1.21.5-1.21.8",
+      "minecraft_version": "1.21.5",
+      "yarn_mappings": "1.21.5+build.1",
+      "fabric_api_version": "0.128.2+1.21.5"
+    },
+    {
+      "version": "1.21.6",
+      "mcVersion": "1.21.5-1.21.8",
+      "minecraft_version": "1.21.6",
+      "yarn_mappings": "1.21.6+build.1",
+      "fabric_api_version": "0.128.2+1.21.6"
+    },
+    {
+      "version": "1.21.7",
+      "mcVersion": "1.21.5-1.21.8",
+      "minecraft_version": "1.21.7",
+      "yarn_mappings": "1.21.7+build.8",
+      "fabric_api_version": "0.129.0+1.21.7"
+    },
+    {
+      "version": "1.21.8",
+      "mcVersion": "1.21.5-1.21.8",
+      "minecraft_version": "1.21.8",
+      "yarn_mappings": "1.21.8+build.1",
+      "fabric_api_version": "0.136.1+1.21.8"
+    },
+    {
+      "version": "1.21.9",
+      "mcVersion": "1.21.9-1.21.10",
+      "minecraft_version": "1.21.9",
+      "yarn_mappings": "1.21.9+build.1",
+      "fabric_api_version": "0.134.1+1.21.9"
+    },
+    {
+      "version": "1.21.10",
+      "mcVersion": "1.21.9-1.21.10",
+      "minecraft_version": "1.21.10",
+      "yarn_mappings": "1.21.10+build.3",
+      "fabric_api_version": "0.138.4+1.21.10"
+    },
+    {
+      "version": "1.21.11",
+      "mcVersion": "1.21.11",
+      "minecraft_version": "1.21.11",
+      "yarn_mappings": "1.21.11+build.6",
+      "fabric_api_version": "0.141.4+1.21.11"
     }
   ]
 }
