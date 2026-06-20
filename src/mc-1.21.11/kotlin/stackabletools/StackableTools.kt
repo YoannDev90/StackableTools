@@ -144,7 +144,7 @@ object StackableTools : ModInitializer {
 
 							if (!opened) {
 								try {
-									Runtime.getRuntime().exec(arrayOf("gnome-open", configFile.path))
+									Runtime.getRuntime().exec(arrayOf("gio", "open", configFile.path))
 									opened = true
 								} catch (_: Exception) {}
 							}

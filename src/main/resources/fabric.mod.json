@@ -29,7 +29,7 @@
   "mixins": ["stackabletools.mixins.json"],
   "depends": {
     "fabricloader": ">=0.18.5",
-    "minecraft": ">=1.21.0",
+    "minecraft": "${minecraft_dependency}",
     "java": ">=21",
     "fabric-api": "*",
     "fabric-language-kotlin": "*"

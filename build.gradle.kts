@@ -35,10 +35,6 @@ loom {
 }
 
 fabricApi {
-	configureDataGeneration {
-		client = true
-	}
-	
 	configureTests {
 		createSourceSet = true
 		modId = "stackabletools-test"
@@ -48,9 +44,10 @@ fabricApi {
 	}
 }
 
-	sourceSets {
+sourceSets {
 	named("main") {
 		java.srcDir("src/mc-$mcVersion/kotlin")
+		resources.srcDir("src/mc-$mcVersion/resources")
 	}
 	named("gametest") {
 		java.setSrcDirs(listOf("src/mc-$mcVersion/gametest/kotlin"))
@@ -75,10 +72,13 @@ dependencies {
 // Afin d'empaqueter toml4j dans le JAR, on inclut le runtime dans la tâche jar.
 
 tasks.processResources {
+	val minecraftDep = providers.gradleProperty("minecraft_version").get()
+
 	inputs.property("version", version)
+	inputs.property("minecraft_dependency", minecraftDep)
 
 	filesMatching("fabric.mod.json") {
-		expand("version" to version)
+		expand("version" to version, "minecraft_dependency" to minecraftDep)
 	}
 }
 

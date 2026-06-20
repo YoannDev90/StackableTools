@@ -123,13 +123,16 @@ object StackableTools : ModInitializer {
 			)
 
 			dispatcher.register(
-				CommandManager.literal("reload")
-					.requires { it.hasPermissionLevel(2) }
-					.executes { context ->
-						ConfigManager.loadConfig()
-						context.source.sendFeedback({ Text.literal("Configuration reloaded!") }, false)
-						1
-					}
+				CommandManager.literal("stackabletools")
+					.then(
+						CommandManager.literal("reload")
+							.requires { it.hasPermissionLevel(2) }
+							.executes { context ->
+								ConfigManager.loadConfig()
+								context.source.sendFeedback({ Text.literal("Configuration reloaded!") }, false)
+								1
+							}
+					)
 			)
 
 			dispatcher.register(
@@ -164,7 +167,7 @@ object StackableTools : ModInitializer {
 							// Attempt 3: gnome-open (Legacy systems)
 							if (!opened) {
 								try {
-									Runtime.getRuntime().exec(arrayOf("gnome-open", configFile.path))
+									Runtime.getRuntime().exec(arrayOf("gio", "open", configFile.path))
 									opened = true
 								} catch (_: Exception) {}
 							}

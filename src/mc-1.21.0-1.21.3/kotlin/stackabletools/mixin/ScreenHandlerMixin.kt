@@ -28,39 +28,30 @@ abstract class ScreenHandlerMixin {
      * Injected into the onSlotClick function to monitor and modify player mouse clicks within inventories.
      * We manually handle the PICKUP action when the item is marked as stackable by the mod.
      */
-    @Inject(method = ["onSlotClick"], at = [At("HEAD")], cancellable = true)
-    private fun onSlotClick(slotIndex: Int, button: Int, actionActionType: SlotActionType, player: PlayerEntity, ci: CallbackInfo) {
-        // Run logic only on the server to prevent synchronization mismatches
-        if (player.getWorld().isClient) return
-        
-        if (actionActionType == SlotActionType.PICKUP) {
-            val handler = this as Any as ScreenHandler
-            if (slotIndex < 0 || slotIndex >= handler.slots.size) return
-            
-            val slot = handler.getSlot(slotIndex)
-            val cursorStack = handler.cursorStack
-            val slotStack = slot.stack
+    private fun tryMerge(handler: ScreenHandler, slotIndex: Int): Boolean {
+        if (slotIndex < 0 || slotIndex >= handler.slots.size) return false
+        val slot = handler.getSlot(slotIndex)
+        val cursorStack = handler.cursorStack
+        val slotStack = slot.stack
+        if (cursorStack.isEmpty || slotStack.isEmpty) return false
+        if (!StackableToolsUtils.isStackableItem(cursorStack) || !StackableToolsUtils.canStackItems(cursorStack, slotStack)) return false
 
-            // Logic: if current cursor item and slot item are the same "stackable" tool/potion, merge them manually
-            if (!cursorStack.isEmpty && !slotStack.isEmpty && 
-                StackableToolsUtils.isStackableItem(cursorStack) &&
-                StackableToolsUtils.canStackItems(cursorStack, slotStack)) {
-                
-                val cfg = ConfigManager.getConfig().stacking
-                // Determine limits for the category
-                val maxStack = StackableToolsUtils.maxStackFor(cursorStack, cfg)
-                
-                val canTransfer = (maxStack - slotStack.count).coerceAtLeast(0)
-                if (canTransfer > 0) {
-                    val toTransfer = minOf(cursorStack.count, canTransfer)
-                    slotStack.count += toTransfer
-                    cursorStack.count -= toTransfer
-                    
-                    // Sync the state with client side to ensure visual representation is correct
-                    handler.syncState()
-                    ci.cancel() // Interrupt vanilla behavior
-                }
-            }
-        }
+        val cfg = ConfigManager.getConfig().stacking
+        val maxStack = StackableToolsUtils.maxStackFor(cursorStack, cfg)
+
+        val canTransfer = (maxStack - slotStack.count).coerceAtLeast(0)
+        if (canTransfer <= 0) return false
+        val toTransfer = minOf(cursorStack.count, canTransfer)
+        slotStack.count += toTransfer
+        cursorStack.count -= toTransfer
+        handler.syncState()
+        return true
+    }
+
+    @Inject(method = ["onSlotClick"], at = [At("HEAD")], cancellable = true)
+    private fun onSlotClick(slotIndex: Int, button: Int, actionType: SlotActionType, player: PlayerEntity, ci: CallbackInfo) {
+        if (player.getWorld().isClient) return
+        val handler = this as Any as ScreenHandler
+        if (actionType == SlotActionType.PICKUP && tryMerge(handler, slotIndex)) ci.cancel()
     }
 }
