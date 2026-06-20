@@ -8,6 +8,11 @@ on:
         type: string
         required: false
         default: ""
+      run-tests:
+        description: "Run game tests after build"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -21,15 +26,6 @@ jobs:
       - uses: actions/checkout@v4
       - id: gen_matrix
         run: |
-          INCLUDE=$(jq -c '[.versions[] | {
-            version: .version,
-            mc_src: (.mcVersion // .version),
-            mc_ver: .minecraft_version,
-            fabric_api: .fabric_api_version,
-            yarn: (.yarn_mappings // ""),
-            loader: (.loader_version // "")
-          }]' versions.json | jq -c '[.[] | select("src/mc-" + .mc_src as $d | $d | type == "string")]' 2>/dev/null || echo "[]")
-          # Fallback: filter by directory existence
           ENTRIES=$(jq -c '[.versions[] | {version, mc_src: (.mcVersion // .version), mc_ver: .minecraft_version, fabric_api: .fabric_api_version, yarn: (.yarn_mappings // ""), loader: (.loader_version // "")}]' versions.json)
           FILTERED="[]"
           while read -r entry; do
@@ -74,6 +70,14 @@ jobs:
           [ -n "${{ matrix.yarn }}" ] && PROPS+=(-Pyarn_mappings="${{ matrix.yarn }}")
           [ -n "${{ matrix.loader }}" ] && PROPS+=(-Ploader_version="${{ matrix.loader }}")
           ./gradlew clean build "${PROPS[@]}" --no-daemon -q
+
+      - name: Run game tests
+        if: steps.check_src.outputs.exists == 'true' && github.event.inputs.run-tests == 'true' && !startsWith(matrix.mc_src, '26')
+        run: |
+          PROPS=(-DmcVersion="${{ matrix.mc_src }}" -PmcVersion="${{ matrix.mc_src }}" -Pminecraft_version="${{ matrix.mc_ver }}" -Pfabric_api_version="${{ matrix.fabric_api }}" -PenableGameTests=true)
+          [ -n "${{ matrix.yarn }}" ] && PROPS+=(-Pyarn_mappings="${{ matrix.yarn }}")
+          [ -n "${{ matrix.loader }}" ] && PROPS+=(-Ploader_version="${{ matrix.loader }}")
+          ./gradlew runGameTest "${PROPS[@]}" --no-daemon -q
 
       - name: Get mod version
         if: steps.check_src.outputs.exists == 'true'

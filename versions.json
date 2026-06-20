@@ -2,12 +2,13 @@
   "launcherDir": "/home/yoann/.var/app/org.freesmTeam.freesmlauncher/data/FreesmLauncher/",
   "location": "minecraft/mods/",
   "instances": {
-    "1.20.0": "instances/1.20.0/",
+    "1.20": "instances/1.20/",
     "1.20.1": "instances/1.20.1/",
     "1.20.2": "instances/1.20.2/",
     "1.20.3": "instances/1.20.3/",
     "1.20.4": "instances/1.20.4/",
     "1.20.5": "instances/1.20.5/",
+    "1.20.6": "instances/1.20.6/",
     "1.21.0": "instances/1.21/",
     "1.21.1": "instances/1.21.1/",
     "1.21.2": "instances/1.21.2/",
@@ -26,8 +27,8 @@
   },
   "versions": [
     {
-      "version": "1.20.0",
-      "mcVersion": "1.20.0-1.20.3",
+      "version": "1.20",
+      "mcVersion": "1.20-1.20.3",
       "minecraft_version": "1.20",
       "yarn_mappings": "1.20+build.1",
       "fabric_api_version": "0.82.1+1.20",
@@ -35,7 +36,7 @@
     },
     {
       "version": "1.20.1",
-      "mcVersion": "1.20.0-1.20.3",
+      "mcVersion": "1.20-1.20.3",
       "minecraft_version": "1.20.1",
       "yarn_mappings": "1.20.1+build.10",
       "fabric_api_version": "0.92.9+1.20.1",
@@ -43,7 +44,7 @@
     },
     {
       "version": "1.20.2",
-      "mcVersion": "1.20.0-1.20.3",
+      "mcVersion": "1.20-1.20.3",
       "minecraft_version": "1.20.2",
       "yarn_mappings": "1.20.2+build.4",
       "fabric_api_version": "0.91.6+1.20.2",
@@ -51,7 +52,7 @@
     },
     {
       "version": "1.20.3",
-      "mcVersion": "1.20.0-1.20.3",
+      "mcVersion": "1.20-1.20.3",
       "minecraft_version": "1.20.3",
       "yarn_mappings": "1.20.3+build.1",
       "fabric_api_version": "0.91.1+1.20.3",
@@ -66,10 +67,17 @@
     },
     {
       "version": "1.20.5",
-      "mcVersion": "1.20.5",
+      "mcVersion": "1.20.5-1.20.6",
       "minecraft_version": "1.20.5",
       "yarn_mappings": "1.20.5+build.1",
       "fabric_api_version": "0.97.3+1.20.5"
+    },
+    {
+      "version": "1.20.6",
+      "mcVersion": "1.20.5-1.20.6",
+      "minecraft_version": "1.20.6",
+      "yarn_mappings": "1.20.6+build.3",
+      "fabric_api_version": "0.100.8+1.20.6"
     },
     {
       "version": "1.21.0",
