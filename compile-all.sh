@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Multi-version build script
+# Builds all Minecraft versions defined in versions.json
+# Usage: ./compile-all.sh [-c] [-w] [-n] [--dry-run]
+#   -c : clean before each build
+#   -w : disable Gradle warnings
+#   -n : no Gradle daemon
+#   --dry-run : simulate without building
+
 SCRIPT_VERSION="1.1.0"
 CONFIG_FILE="versions.json"
 CLEAN=false
@@ -53,16 +61,26 @@ echo ""
 BUILD_ALL_SUCCESS=true
 
 while read -r version_data; do
-    VERSION=$(echo "$version_data" | jq -r '.version')
+    MC_VERSION=$(echo "$version_data" | jq -r '.version')
     MC_SRC=$(echo "$version_data" | jq -r '.mcVersion // .version')
     MINECRAFT_VER=$(echo "$version_data" | jq -r '.minecraft_version')
-    YARN=$(echo "$version_data" | jq -r '.yarn_mappings')
+    YARN=$(echo "$version_data" | jq -r '.yarn_mappings // empty')
     FABRIC_API=$(echo "$version_data" | jq -r '.fabric_api_version')
+    LOADER=$(echo "$version_data" | jq -r '.loader_version // empty')
 
-    echo "--- Building for Minecraft $VERSION ($MINECRAFT_VER) ---"
+    if [ ! -d "src/mc-${MC_SRC}" ]; then
+        echo "--- Skipping Minecraft $MC_VERSION (no src/mc-${MC_SRC}) ---"
+        echo ""
+        continue
+    fi
+
+    echo "--- Building for Minecraft $MC_VERSION ($MINECRAFT_VER) ---"
 
     if [ "$DRY_RUN" = true ]; then
-        echo "  [DRY-RUN] Would build: -PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER -Pyarn_mappings=$YARN -Pfabric_api_version=$FABRIC_API"
+        PROPS="-DmcVersion=$MC_SRC -PmcVersion=$MC_SRC -Pminecraft_version=$MINECRAFT_VER -Pfabric_api_version=$FABRIC_API"
+        [ -n "$YARN" ] && PROPS="$PROPS -Pyarn_mappings=$YARN"
+        [ -n "$LOADER" ] && PROPS="$PROPS -Ploader_version=$LOADER"
+        echo "  [DRY-RUN] Would build: $PROPS"
         echo ""
         continue
     fi
@@ -74,12 +92,12 @@ while read -r version_data; do
     $WARN && GRADLE_ARGS+=(--warning-mode=none)
 
     START_TIME=$(date +%s)
-    ./gradlew "${GRADLE_ARGS[@]}" \
-        -PmcVersion="$MC_SRC" \
-        -Pminecraft_version="$MINECRAFT_VER" \
-        -Pyarn_mappings="$YARN" \
-        -Pfabric_api_version="$FABRIC_API" \
-        2>&1 | while IFS= read -r line; do echo "  $line"; done
+
+    PROP_ARGS=(-DmcVersion="$MC_SRC" -PmcVersion="$MC_SRC" -Pminecraft_version="$MINECRAFT_VER" -Pfabric_api_version="$FABRIC_API")
+    [ -n "$YARN" ] && PROP_ARGS+=(-Pyarn_mappings="$YARN")
+    [ -n "$LOADER" ] && PROP_ARGS+=(-Ploader_version="$LOADER")
+
+    ./gradlew "${GRADLE_ARGS[@]}" "${PROP_ARGS[@]}" 2>&1 | while IFS= read -r line; do echo "  $line"; done
 
     EXIT_CODE=${PIPESTATUS[0]}
     END_TIME=$(date +%s)
@@ -89,10 +107,7 @@ while read -r version_data; do
         JAR_PATH=$(ls build/libs/*.jar 2>/dev/null | grep -v "\-sources" | grep -v "\-dev" | head -n 1)
 
         if [ -n "$JAR_PATH" ]; then
-            INSTANCE_DIR=$(echo "$version_data" | jq -r '.instanceDir // empty')
-            if [ -z "$INSTANCE_DIR" ] || [ "$INSTANCE_DIR" = "null" ]; then
-                INSTANCE_DIR=$(jq -r --arg v "$VERSION" '.instances[$v] // empty' "$CONFIG_FILE")
-            fi
+            INSTANCE_DIR=$(jq -r --arg v "$MC_VERSION" '.instances[$v] // empty' "$CONFIG_FILE")
 
             if [ -n "$LAUNCHER_DIR" ] && [ "$LAUNCHER_DIR" != "null" ] && [ -n "$INSTANCE_DIR" ]; then
                 DEST_DIR="${LAUNCHER_DIR%/}/${INSTANCE_DIR%/}/${LOCATION%/}/"

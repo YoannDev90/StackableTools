@@ -18,19 +18,13 @@
         "value": "stackabletools.StackableTools",
         "adapter": "kotlin"
       }
-    ],
-    "fabric-datagen": [
-      {
-        "value": "stackabletools.StackableToolsDataGenerator",
-        "adapter": "kotlin"
-      }
     ]
   },
   "mixins": ["stackabletools.mixins.json"],
   "depends": {
     "fabricloader": ">=0.18.5",
     "minecraft": "${minecraft_dependency}",
-    "java": ">=21",
+    "java": ">=${java_version}",
     "fabric-api": "*",
     "fabric-language-kotlin": "*"
   }

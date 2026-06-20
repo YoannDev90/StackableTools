@@ -1,15 +1,15 @@
-name: Sync READMEs across branches
+name: Sync shared files across branches
 
 on:
   push:
     branches:
       - dev
-      - 1.20.x
-      - 1.21.x
-      - 26.1.x
     paths:
       - README.md
       - README_FR.md
+      - versions.json
+      - compile-all.sh
+      - .github/workflows/**
 
 jobs:
   sync:
@@ -26,12 +26,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Sync READMEs to all branches
+      - name: Sync shared files to all branches
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SOURCE_BRANCH="${GITHUB_REF#refs/heads/}"
-          TARGETS=("dev" "1.20.x" "1.21.x" "26.1.x")
+          TARGETS=("main")
+          SHARED_FILES=("README.md" "README_FR.md" "versions.json" "compile-all.sh" ".github/workflows/")
 
           for target in "${TARGETS[@]}"; do
             if [ "$target" = "$SOURCE_BRANCH" ]; then
@@ -40,9 +41,9 @@ jobs:
 
             if git show-ref --verify --quiet refs/remotes/origin/"$target"; then
               git checkout "$target"
-              git checkout "$SOURCE_BRANCH" -- README.md README_FR.md
+              git checkout "$SOURCE_BRANCH" -- "${SHARED_FILES[@]}"
               if ! git diff --cached --quiet; then
-                git commit -m "docs: sync READMEs from $SOURCE_BRANCH [skip sync]"
+                git commit -m "chore: sync shared files from $SOURCE_BRANCH [skip sync]"
                 git push origin "$target"
               fi
             fi
