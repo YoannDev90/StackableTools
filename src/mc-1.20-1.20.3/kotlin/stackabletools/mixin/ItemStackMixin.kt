@@ -26,6 +26,8 @@ abstract class ItemStackMixin {
 
         processingDamage = true
         try {
+            stack.damage = 1
+
             val leftover = stack.copy()
             leftover.count = stack.count - 1
             leftover.damage = 0
@@ -36,6 +38,8 @@ abstract class ItemStackMixin {
             if (!entity.inventory.insertStack(leftover)) {
                 entity.dropItem(leftover, false)
             }
+
+            stack.damage = 0
         } finally {
             processingDamage = false
         }

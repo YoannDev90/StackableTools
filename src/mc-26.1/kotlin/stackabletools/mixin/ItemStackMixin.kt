@@ -33,6 +33,7 @@ abstract class ItemStackMixin {
                     val countBefore = stack.count
 
                     stack.count = 1
+                    stack.damageValue = 1
 
                     val leftover = stack.copy()
                     leftover.count = countBefore - 1
@@ -43,6 +44,8 @@ abstract class ItemStackMixin {
                     if (!player.inventory.add(leftover)) {
                         player.drop(leftover, false)
                     }
+
+                    stack.damageValue = 0
                 } finally {
                     isProcessingDamageInternal.set(false)
                 }
