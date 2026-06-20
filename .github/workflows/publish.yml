@@ -14,15 +14,15 @@ jobs:
       - uses: actions/checkout@v4
       - id: gen_matrix
         run: |
-          MATRIX=$(jq -c '{include: [.versions[] | {
-            version: .version,
-            mc_src: (.mcVersion // .version),
-            mc_ver: .minecraft_version,
-            fabric_api: .fabric_api_version,
-            yarn: (.yarn_mappings // ""),
-            loader: (.loader_version // "")
-          }]}' versions.json)
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          ENTRIES=$(jq -c '[.versions[] | {version, mc_src: (.mcVersion // .version), mc_ver: .minecraft_version, fabric_api: .fabric_api_version, yarn: (.yarn_mappings // ""), loader: (.loader_version // "")}]' versions.json)
+          FILTERED="[]"
+          while read -r entry; do
+            MC_SRC=$(echo "$entry" | jq -r '.mc_src')
+            if [ -d "src/mc-$MC_SRC" ]; then
+              FILTERED=$(echo "$FILTERED" | jq ". + [$entry]")
+            fi
+          done < <(echo "$ENTRIES" | jq -c '.[]')
+          echo "matrix={\"include\": $FILTERED}" >> $GITHUB_OUTPUT
 
   publish:
     needs: setup

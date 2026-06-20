@@ -116,43 +116,35 @@ object ConfigManager {
         }
     }
 
-    /**
-     * Updates a configuration value by path (e.g., "stacking.enable").
-     * @param path The path to the configuration key.
-     * @param value The new value to set.
-     */
+    private val configSetters: Map<String, (StackableToolsConfig, Any) -> StackableToolsConfig> = mapOf(
+        "logging.enable" to { c, v -> c.copy(logging = c.logging.copy(enable = v as Boolean)) },
+        "logging.level" to { c, v -> c.copy(logging = c.logging.copy(level = v as String)) },
+        "logging.in_file" to { c, v -> c.copy(logging = c.logging.copy(inFile = v as Boolean)) },
+        "logging.in_console" to { c, v -> c.copy(logging = c.logging.copy(inConsole = v as Boolean)) },
+        "stacking.enable" to { c, v -> c.copy(stacking = c.stacking.copy(enable = v as Boolean)) },
+        "stacking.max_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxStackSize = v as Long)) },
+        "stacking.max_tool_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxToolStackSize = v as Long)) },
+        "stacking.max_potion_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxPotionStackSize = v as Long)) },
+        "stacking.max_enchanted_books_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxEnchantedBooksStackSize = v as Long)) },
+        "stacking.max_weapons_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxWeaponsStackSize = v as Long)) },
+        "stacking.max_elytra_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxElytraStackSize = v as Long)) },
+        "stacking.max_armor_piece_stack_size" to { c, v -> c.copy(stacking = c.stacking.copy(maxArmorPieceStackSize = v as Long)) },
+        "stacking.active_categories" to { c, v ->
+            val list = (v as? List<*>)?.mapNotNull { it?.toString()?.let(StackingCategory::fromString) } ?: c.stacking.activeCategories
+            c.copy(stacking = c.stacking.copy(activeCategories = list))
+        },
+        "stacking.excluded_item_ids" to { c, v ->
+            c.copy(stacking = c.stacking.copy(excludedItemIds = (v as? List<*>)?.mapNotNull { it?.toString() } ?: c.stacking.excludedItemIds))
+        },
+        "stacking.manual_item_ids" to { c, v ->
+            c.copy(stacking = c.stacking.copy(manualStackableItemIds = (v as? List<*>)?.mapNotNull { it?.toString() } ?: c.stacking.manualStackableItemIds))
+        }
+    )
+
     fun updateValue(path: String, value: Any) {
         val current = getConfig()
-        val updated = when (path) {
-            "logging.enable" -> current.copy(logging = current.logging.copy(enable = value as Boolean))
-            "logging.level" -> current.copy(logging = current.logging.copy(level = value as String))
-            "logging.in_file" -> current.copy(logging = current.logging.copy(inFile = value as Boolean))
-            "logging.in_console" -> current.copy(logging = current.logging.copy(inConsole = value as Boolean))
-            
-            "stacking.enable" -> current.copy(stacking = current.stacking.copy(enable = value as Boolean))
-            "stacking.max_stack_size" -> current.copy(stacking = current.stacking.copy(maxStackSize = value as Long))
-            "stacking.max_tool_stack_size" -> current.copy(stacking = current.stacking.copy(maxToolStackSize = value as Long))
-            "stacking.max_potion_stack_size" -> current.copy(stacking = current.stacking.copy(maxPotionStackSize = value as Long))
-            "stacking.max_enchanted_books_stack_size" -> current.copy(stacking = current.stacking.copy(maxEnchantedBooksStackSize = value as Long))
-            "stacking.max_weapons_stack_size" -> current.copy(stacking = current.stacking.copy(maxWeaponsStackSize = value as Long))
-            "stacking.max_elytra_stack_size" -> current.copy(stacking = current.stacking.copy(maxElytraStackSize = value as Long))
-            "stacking.max_armor_piece_stack_size" -> current.copy(stacking = current.stacking.copy(maxArmorPieceStackSize = value as Long))
-            
-            "stacking.active_categories" -> {
-                val list = (value as? List<*>)?.mapNotNull { it?.toString()?.let { s -> StackingCategory.fromString(s) } } ?: current.stacking.activeCategories
-                current.copy(stacking = current.stacking.copy(activeCategories = list))
-            }
-            "stacking.excluded_item_ids" -> {
-                val list = (value as? List<*>)?.mapNotNull { it?.toString() } ?: current.stacking.excludedItemIds
-                current.copy(stacking = current.stacking.copy(excludedItemIds = list))
-            }
-            "stacking.manual_item_ids" -> {
-                val list = (value as? List<*>)?.mapNotNull { it?.toString() } ?: current.stacking.manualStackableItemIds
-                current.copy(stacking = current.stacking.copy(manualStackableItemIds = list))
-            }
-            else -> current
-        }
-        
+        val updater = configSetters[path] ?: return
+        val updated = updater(current, value)
         if (updated != current) {
             saveConfig(updated)
         }

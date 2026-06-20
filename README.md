@@ -42,18 +42,14 @@
 > [!IMPORTANT]
 > To build the mod yourself, you **must** configure your environment first.
 
-1.  Open [compile_config.json](compile_config.json) (or copy it from [compile_config_sample.json](compile_config_sample.json)).
-2.  Update the fields to match your local environment:
-    ```json
-    {
-      "output_path": "path/to/your/custom/output",
-      "minecraft_version": "1.21.4",
-      "fabric_loader_version": "0.16.9"
-    }
-    ```
-3.  Run the build script:
+1.  Edit [versions.json](versions.json) to configure your local launcher path and instance directories.
+2.  Run the build script for all versions:
     ```bash
-    ./compile.sh
+    ./compile-all.sh
+    ```
+    Or for a single version, use Gradle directly:
+    ```bash
+    ./gradlew build -PmcVersion=1.20.4 -Pminecraft_version=1.20.4 -Pyarn_mappings=1.20.4+build.3 -Pfabric_api_version=0.97.3+1.20.4
     ```
 
 ## Installation (User)

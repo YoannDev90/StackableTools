@@ -13,12 +13,12 @@ enum class StackingCategory(val key: String) {
     ALL("all");
 
     companion object {
-        /**
-         * Resolves a StackingCategory from a string value (key or name).
-         */
         fun fromString(value: String): StackingCategory? {
             val normalized = value.trim().lowercase()
-            return values().find { it.key == normalized || it.name.lowercase() == normalized || it.key + "s" == normalized }
+            return values().find {
+                val singular = it.key.removeSuffix("s")
+                it.key == normalized || it.name.lowercase() == normalized || singular == normalized
+            }
         }
     }
 }
