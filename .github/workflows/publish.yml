@@ -19,7 +19,7 @@ jobs:
           while read -r entry; do
             MC_SRC=$(echo "$entry" | jq -r '.mc_src')
             if [ -d "src/mc-$MC_SRC" ]; then
-              FILTERED=$(echo "$FILTERED" | jq ". + [$entry]")
+              FILTERED=$(echo "$FILTERED" | jq -c ". + [$entry]")
             fi
           done < <(echo "$ENTRIES" | jq -c '.[]')
           echo "matrix={\"include\": $FILTERED}" >> $GITHUB_OUTPUT
