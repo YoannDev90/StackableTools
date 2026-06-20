@@ -20,6 +20,7 @@ val javaVersion = when {
     is120x -> 17
     else -> 21
 }
+val enableGameTests = !is261 && project.hasProperty("enableGameTests") && project.property("enableGameTests") == "true"
 
 version = providers.gradleProperty("mod_version").get()
 group = providers.gradleProperty("maven_group").get()
@@ -39,7 +40,7 @@ loom {
     }
 }
 
-if (!is261) {
+if (enableGameTests) {
     fabricApi {
         configureTests {
             createSourceSet = true
@@ -56,7 +57,7 @@ sourceSets {
         java.srcDir("src/mc-$mcVersion/kotlin")
         resources.srcDir("src/mc-$mcVersion/resources")
     }
-    if (!is261) {
+    if (enableGameTests) {
         named("gametest") {
             java.setSrcDirs(listOf("src/mc-$mcVersion/gametest/kotlin"))
         }
@@ -143,8 +144,7 @@ publishing {
     }
 }
 
-if (!is261) {
-    val enableGameTests = project.hasProperty("enableGameTests") && project.property("enableGameTests") == "true"
+if (enableGameTests) {
     tasks.matching { it.name == "runGameTest" }.configureEach {
         onlyIf { enableGameTests }
     }
