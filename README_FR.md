@@ -1,4 +1,4 @@
-# StackableTools (Édition Kotlin)
+# StackableTools
 
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![Licence](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
@@ -22,7 +22,7 @@
 | **Modrinth**   | [Télécharger sur Modrinth](https://modrinth.com/mod/stackabletools)                       |
 
 ## Support des versions
-| Version | Support (Théorique) | Support (Testé complètement) |
+| Version | Supporté | Supporté + Testé complètement |
 | :------ | :------------------ | :--------------------------- |
 | 1.20 – 1.20.6 | ✅ | ❌ |
 | 1.21.0 – 1.21.3 | ✅ | ❌ |
@@ -38,45 +38,10 @@
 - **Compatible Mending** : Fonctionne parfaitement avec Mending (Raccommodage) et Unbreaking (Solidité).
 - **Insertion intelligente** : Les objets ramassés fusionnent automatiquement avec les piles existantes.
 
-## Configuration (Développeur)
-> [!IMPORTANT]
-> Pour compiler le mod vous-même, vous **devez** d'abord configurer votre environnement.
-
-1.  Ouvrez [compile_config.json](compile_config.json) (ou copiez-le depuis [compile_config_sample.json](compile_config_sample.json)).
-2.  Mettez à jour les champs selon votre environnement local :
-    ```json
-    {
-      "output_path": "chemin/vers/votre/sortie/personnalisée",
-      "minecraft_version": "1.21.4",
-      "fabric_loader_version": "0.16.9"
-    }
-    ```
-3.  Lancez le script de compilation :
-    ```bash
-    ./compile.sh
-    ```
-
 ## Installation (Utilisateur)
 1.  Téléchargez le dernier `.jar` depuis la page des [Releases](https://github.com/yoanndev90/StackableTools/releases).
 2.  Installez **Fabric Loader** et **Fabric API**.
 3.  Placez le `.jar` dans votre dossier `mods/`.
-4.  Lancez et profitez d'un inventaire plus propre !
-
-> [!TIP] 
-> Nous recommandons l'utilisation de **Freesm Launcher** (un fork de Prism) pour une meilleure expérience de modding.
-
-## Prérequis
-- **Java 21+** (Cible la dernière JVM stable)
-- **Gradle 8.11+**
-- **Fabric Loader**
-
-## Contribuer
-Les contributions sont ce qui rend la communauté open source si formidable pour apprendre, s'inspirer et créer.
-1. Forkez le projet.
-2. Créez votre branche de fonctionnalité (`git checkout -b feature/AmazingFeature`).
-3. Commitez vos changements (`git commit -m 'Add some AmazingFeature'`).
-4. Pushez vers la branche (`git push origin feature/AmazingFeature`).
-5. Ouvrez une Pull Request.
 
 ## Licence
 CC0 1.0 Universal. Voir [LICENSE](LICENSE) pour plus de détails.
