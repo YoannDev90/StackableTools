@@ -1,4 +1,4 @@
-# StackableTools (Kotlin Edition)
+# StackableTools
 
 [![Fabric API](https://img.shields.io/badge/Loader-Fabric-orange.svg?style=for-the-badge)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-CC0_1.0-green.svg?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/blob/master/LICENSE)
@@ -22,7 +22,7 @@
 | **Modrinth**   | [Download on Modrinth](https://modrinth.com/mod/stackabletools)                       |
 
 ## Version Support
-| Version | Supported (Theoretical) | Supported (Fully Tested) |
+| Version | Supported | Supported + Fully Tested |
 | :------ | :---------------------- | :----------------------- |
 | 1.20 – 1.20.6 | ✅ | ❌ |
 | 1.21.0 – 1.21.3 | ✅ | ❌ |
@@ -38,41 +38,11 @@
 - **Mending Compatible**: Works perfectly with Mending and Unbreaking.
 - **Smart Insertion**: Picked-up items will automatically merge into existing stacks.
 
-## Configuration (Developer)
-> [!IMPORTANT]
-> To build the mod yourself, you **must** configure your environment first.
-
-1.  Edit [versions.json](versions.json) to configure your local launcher path and instance directories.
-2.  Run the build script for all versions:
-    ```bash
-    ./compile-all.sh
-    ```
-    Or for a single version, use Gradle directly:
-    ```bash
-    ./gradlew build -PmcVersion=1.20.4 -Pminecraft_version=1.20.4 -Pyarn_mappings=1.20.4+build.3 -Pfabric_api_version=0.97.3+1.20.4
-    ```
-
 ## Installation (User)
 1.  Download the latest `.jar` from the [Releases](https://github.com/yoanndev90/StackableTools/releases) page.
 2.  Install **Fabric Loader** and **Fabric API**.
 3.  Place the `.jar` in your `mods/` folder.
 4.  Launch and enjoy a cleaner inventory!
-
-> [!TIP] 
-> We recommend using **Freesm Launcher** (a fork of Prism) for the best modding experience.
-
-## Requirements
-- **Java 21+** (Targeting latest stable JVM)
-- **Gradle 8.11+**
-- **Fabric Loader**
-
-## Contributing
-Contributions are what make the open source community such an amazing place to learn, inspire, and create.
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
 
 ## License
 CC0 1.0 Universal. See [LICENSE](LICENSE) for details.
