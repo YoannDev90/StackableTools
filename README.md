@@ -42,7 +42,6 @@
 1.  Download the latest `.jar` from the [Releases](https://github.com/yoanndev90/StackableTools/releases) page.
 2.  Install **Fabric Loader** and **Fabric API**.
 3.  Place the `.jar` in your `mods/` folder.
-4.  Launch and enjoy a cleaner inventory!
 
 ## License
 CC0 1.0 Universal. See [LICENSE](LICENSE) for details.
