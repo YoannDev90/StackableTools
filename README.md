@@ -5,7 +5,9 @@
 [![GitHub Release](https://img.shields.io/github/v/release/YoannDev90/StackableTools?style=for-the-badge)](https://github.com/yoanndev90/StackableTools/releases)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/KrqAq3Cj?logo=modrinth&style=for-the-badge)](https://modrinth.com/mod/stackabletools)
 [![CurseForge Downloads](https://img.shields.io/curseforge/dt/1356234?logo=curseforge&style=for-the-badge)](https://www.curseforge.com/minecraft/mc-mods/stackabletools)
-
+[![Used in 0 modpacks on Modpack Index](https://www.modpackindex.com/badge/mod/87191/stackabletools/modpacks.svg?style=large)](https://www.modpackindex.com/modpacks?mods[]=87191)
+[![Supports Minecraft 1.20 – 26.1.2](https://www.modpackindex.com/badge/mod/87191/stackabletools/version.svg?style=large)](https://www.modpackindex.com/modpacks?mods[]=87191)
+[![Updated 4mo ago](https://www.modpackindex.com/badge/mod/87191/stackabletools/updated.svg?style=large)](https://www.modpackindex.com/modpacks?mods[]=87191)
 
 
 ---
